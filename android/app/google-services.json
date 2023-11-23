@@ -1,0 +1,133 @@
+{
+  "project_info": {
+    "project_number": "540039956772",
+    "firebase_url": "https://tamrini-app-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "tamrini-app",
+    "storage_bucket": "tamrini-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:540039956772:android:3254907eeb252f1e500bb1",
+        "android_client_info": {
+          "package_name": "com.example.tamrini"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "540039956772-91h7e8iilk8gobibebreugr8mku6j4jt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnpzXYCZDwRG5Wwz5A93hVqXZ0sLt6rx4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "540039956772-91h7e8iilk8gobibebreugr8mku6j4jt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "540039956772-cco4naqje3ea6m7r383cls5je25qn43g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tamrini.app",
+                "app_store_id": "1571336937"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:540039956772:android:eb0adb28ba5040bb500bb1",
+        "android_client_info": {
+          "package_name": "com.tamrini1.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "540039956772-5cilarba1jkh11a4vjprp139p1vlut08.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tamrini1.com",
+            "certificate_hash": "f5bcd00444a0f608286136a0259c7349444de318"
+          }
+        },
+        {
+          "client_id": "540039956772-98kgj9s3pnrvdn92ia3ren42nd7k949v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tamrini1.com",
+            "certificate_hash": "9d43192427a72a64ad113561e6c35ac67a8c44c2"
+          }
+        },
+        {
+          "client_id": "540039956772-ae795so47qhgdnsg4p6aiv9ktm9b3e2v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tamrini1.com",
+            "certificate_hash": "fffb780fe572c408a7d05ac7e125ef2c65d054cb"
+          }
+        },
+        {
+          "client_id": "540039956772-b90fhr975fcm0t22bv13sa0hb2amok88.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tamrini1.com",
+            "certificate_hash": "2f00f1df9037fd8b8bdc29d5bd73f6ebe08f71bf"
+          }
+        },
+        {
+          "client_id": "540039956772-h4ioacpipnm47buq35jt9dot4do93p2s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tamrini1.com",
+            "certificate_hash": "524406c368361b87742c71727f237b9f7b356617"
+          }
+        },
+        {
+          "client_id": "540039956772-slimsm3s65b6hn46mgdkbs3ddsoe1m1e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tamrini1.com",
+            "certificate_hash": "68e32461e283ba72228337505fba0f19281f050c"
+          }
+        },
+        {
+          "client_id": "540039956772-91h7e8iilk8gobibebreugr8mku6j4jt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnpzXYCZDwRG5Wwz5A93hVqXZ0sLt6rx4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "540039956772-91h7e8iilk8gobibebreugr8mku6j4jt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "540039956772-cco4naqje3ea6m7r383cls5je25qn43g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tamrini.app",
+                "app_store_id": "1571336937"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

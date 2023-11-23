@@ -2,7 +2,7 @@ name: tamrini
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.5 <4.0.0'
+  sdk: ">=3.0.5 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -28,31 +28,108 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  android_alarm_manager_plus: ^3.0.1
+  animate_do: ^2.0.0
+  auto_size_text: ^3.0.0
+  awesome_dialog: ^3.0.2
+  awesome_notifications: null
+  build_runner: null
+  cached_network_image: ^3.2.3
+  carousel_slider: ^4.2.1
+  # chewie: ^1.3.6
+  cloud_firestore: ^4.9.0
+  connectivity_plus: ^3.0.2
+  country_picker: ^2.0.19
+  cupertino_icons: ^1.0.2
+  curved_navigation_bar: ^1.0.3
+  device_preview: ^1.1.0
+  dio: ^4.0.6
+  firebase_analytics: ^10.1.0
+  #  firebase_app_check: ^0.1.1+14
+  firebase_auth: ^4.4.1
+  firebase_cached_image: ^0.4.4
+  firebase_core: ^2.15.1
+  firebase_crashlytics: ^3.0.15
+  firebase_database: ^10.0.10
+  firebase_dynamic_links: ^5.1.0
+  firebase_messaging: ^14.2.0
+  firebase_storage: ^11.2.6
+  fl_chart: ^0.40.2
   flutter:
     sdk: flutter
+  flutter_cache_manager: ^3.3.1
+  flutter_google_places: ^0.3.0
+  flutter_image_slideshow: ^0.1.4
+  easy_localization: ^3.0.0
+  flutter_local_notifications: null
+  flutter_localizations:
+    sdk: flutter
+  flutter_native_splash: ^2.2.17
+  flutter_otp_text_field: ^1.1.0+2
+  flutter_remix: ^0.0.3
+  flutter_screenutil: ^5.8.4
+  flutter_typeahead: ^4.3.1
+  fluttertoast: null
+  font_awesome_flutter: null
+  geocoding: ^2.0.0
+  geolocator: ^9.0.2
+  get: ^4.6.5
+  google_api_headers: ^1.1.1
+  google_maps_flutter: ^2.2.5
+  google_maps_webservice: ^0.0.20-nullsafety.5
+  google_sign_in: ^5.4.4
+  hexcolor: ^3.0.1
+  http: ^0.13.0
+  iconsax: ^0.0.8
+  image_picker: null
+  internet_connection_checker: ^1.0.0+1
+  intl: null
+  intl_utils: null
+  ionicons: ^0.1.2
+  otp_timer_button: ^1.1.0
+  package_info_plus: ^3.0.2
+  path_provider: ^2.0.13
+  permission_handler: null
+  photo_view: null
+  provider: ^6.0.5
+  salomon_bottom_bar: ^3.1.0
+  scroll_snap_list: ^0.9.1
+  shared_preferences: ^2.0.15
+  simple_icons: ^5.24.0
+  sqflite: ^2.3.0
+  the_apple_sign_in: ^1.1.1
+  unity_ads_plugin: ^0.3.7
+  url_launcher: ^6.1.7
+  uuid: ^3.0.7
+  # video_player: ^2.5.2
+  video_thumbnail: ^0.5.3
+  youtube_player_flutter: ^8.1.1
+  mocktail:
+  zoom_pinch_overlay: ^1.4.1+3
+  pdf: ^3.10.4
+  open_filex: ^4.3.2
+  firebase_ui_firestore: ^1.5.11
+  youtube_player_iframe: ^4.0.4
+flutter_native_splash:
+  color: "#00838F"
+  image: assets/icon/icon.png
+  android_12:
+    background_color: "#00838F"
+    background_image: "assets/icon/icon.png"
+    #  background_color: "#D2FFF4"
 
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-
+#  background_image: "/background.png"
+dependency_overrides:
+  flutter_screenutil:
+    path: packages/flutter_screenutil-5.8.4
+  youtube_player_flutter:
+    path: packages/youtube_player_flutter
 dev_dependencies:
+  flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  flutter_lints: ^2.0.0
-
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -69,6 +146,28 @@ flutter:
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
 
+  assets:
+    - assets/images/
+    - assets/icon/
+    - assets/languages/
+
+  fonts:
+    - family: cairo
+      fonts:
+        - asset: assets/fonts/cairo/Cairo-Light.ttf
+        - asset: assets/fonts/cairo/Cairo-Bold.ttf
+        - asset: assets/fonts/cairo/Cairo-Black.ttf
+        - asset: assets/fonts/cairo/Cairo-ExtraBold.ttf
+        - asset: assets/fonts/cairo/Cairo-SemiBold.ttf
+        - asset: assets/fonts/cairo/Cairo-ExtraLight.ttf
+        - asset: assets/fonts/cairo/Cairo-Medium.ttf
+        - asset: assets/fonts/cairo/Cairo-Regular.ttf
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/noto/NotoSans-Regular.ttf
+        - asset: assets/fonts/noto/NotoSans-Bold.ttf
+        - asset: assets/fonts/noto/NotoSans-Italic.ttf
+        - asset: assets/fonts/noto/NotoSans-BoldItalic.ttf
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
@@ -88,3 +187,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_intl:
+  enabled: true
