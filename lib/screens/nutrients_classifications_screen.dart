@@ -13,6 +13,8 @@ import 'package:tamrini/utils/constants.dart';
 import 'package:tamrini/utils/widgets/global%20Widgets.dart';
 import 'package:tamrini/utils/widgets/loading_widget.dart';
 
+import '../provider/ThemeProvider.dart';
+
 class NutrientsClassifications extends StatefulWidget {
   final void Function(Map<String, dynamic> newData)? onSave;
 
@@ -33,16 +35,14 @@ class _NutrientsClassificationsState extends State<NutrientsClassifications> {
     print(
         "************ NutritionClassesList length : ${provider.nutritionClassesList.length}");
 
-    // TODO : ADS
-    // Provider.of<ThemeProvider>(context, listen: false).loadRewardedAd();
+    Provider.of<ThemeProvider>(context, listen: false).loadRewardedAd();
   }
 
   @override
   void dispose() {
-    // TODO : ADS
-    // Provider.of<ThemeProvider>(navigationKey.currentState!.context,
-    //         listen: false)
-    //     .showRewardedAd();
+     Provider.of<ThemeProvider>(navigationKey.currentState!.context,
+            listen: false)
+        .showRewardedAd();
 
     super.dispose();
   }
@@ -56,7 +56,7 @@ class _NutrientsClassificationsState extends State<NutrientsClassifications> {
     return WillPopScope(
       onWillPop: () async {
         pop();
-        // Provider.of<ThemeProvider>(context, listen: false).showRewardedAd();
+        Provider.of<ThemeProvider>(context, listen: false).showRewardedAd();
 
         return true;
       },

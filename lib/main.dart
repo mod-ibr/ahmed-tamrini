@@ -38,6 +38,7 @@ import 'package:tamrini/screens/Articles_screens/Articles_screen.dart';
 import 'package:tamrini/screens/Articles_screens/pending_publishers_screen.dart';
 import 'package:tamrini/screens/Home_screen.dart';
 import 'package:tamrini/screens/ProteinCalc_Screen.dart';
+import 'package:tamrini/screens/chats/chat_screen.dart';
 import 'package:tamrini/screens/diet_food_screens/diet_food_details_screen.dart';
 import 'package:tamrini/screens/diet_food_screens/diet_food_screen.dart';
 import 'package:tamrini/screens/exercises_screens/exercise_Article_details_screen.dart';
@@ -54,6 +55,7 @@ import 'package:tamrini/screens/question_screens/question_details_screen.dart';
 import 'package:tamrini/screens/question_screens/questions_screen.dart';
 import 'package:tamrini/screens/supplement_screens/supplements_Article_details_screen.dart';
 import 'package:tamrini/screens/supplement_screens/supplements_screen.dart';
+import 'package:tamrini/screens/trainer_screens/pending_subscribers_screen.dart';
 import 'package:tamrini/screens/trainer_screens/pending_trainers_screen.dart';
 import 'package:tamrini/styles/themes.dart';
 import 'package:tamrini/utils/cache_helper.dart';
@@ -365,6 +367,18 @@ void _handleMessage(RemoteMessage message) {
             ))
           : To(const QuestionsScreen());
     }
+    if (message.data['type'] == 'chat') {
+      String chatId = message.data['chatId'];
+      if (message.data['chatId'] != null) {
+        To(ChatScreen(chatID: chatId));
+      }
+    }
+    if (message.data['type'] == 'gym_subscription') {
+      log("NOTIFICATION type : gym_subscription");
+      Provider.of<GymProvider>(navigationKey.currentContext!, listen: false)
+          .fetchAndSetPendingSubscribers();
+      To(const PendingSubscribersScreen());
+    }
     if (message.data['type'] == 'newExercises') {
       var title = message.notification?.title;
       log("Data : ${message.data['type']}");
@@ -653,6 +667,7 @@ void main() async {
         ),
       ],
       child: MyApp(isLogged: isLoggedIn),
+
       // child: MyApp(isDark: isDark, isLogged: isLoggedIn),
     ),
   );

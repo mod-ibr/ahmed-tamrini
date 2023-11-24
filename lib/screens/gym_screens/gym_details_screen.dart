@@ -1,21 +1,25 @@
 import 'dart:developer';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:provider/provider.dart';
 import 'package:tamrini/model/gym.dart';
 import 'package:tamrini/provider/gym_provider.dart';
 import 'package:tamrini/provider/user_provider.dart';
 import 'package:tamrini/screens/gym_screens/edit_gym_screen.dart';
+import 'package:tamrini/screens/gym_screens/subscription_payment_screen.dart';
 import 'package:tamrini/utils/constants.dart';
 import 'package:tamrini/utils/video_manager.dart';
 import 'package:tamrini/utils/widgets/global%20Widgets.dart';
 
 import '../../utils/distripute_assets.dart';
+import '../chats/chat_screen.dart';
 
 int imgIndex = 0;
 
@@ -49,10 +53,12 @@ class _GymDetailsScreenState extends State<GymDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    log('************************ Current User Id : ${Provider.of<UserProvider>(context, listen: false).getCurrentUserId()}');
-    log("************** Gym Owner Id : ${widget.gym.gymOwnerId} ");
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+    GymProvider gymProvider = Provider.of<GymProvider>(context, listen: false);
+    log("************** User Gym Id : ${userProvider.user.subscribedGymId} ");
+    log("************** Gym Id : ${widget.gym.id} ");
     log("*************** !widget.isAll : ${!widget.isAll}");
-
     return Scaffold(
       persistentFooterButtons: [adBanner()],
       appBar: globalAppBar(widget.gym.name),
@@ -60,9 +66,6 @@ class _GymDetailsScreenState extends State<GymDetailsScreen> {
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Container(
-            // constraints:  BoxConstraints(
-            //   minHeight: MediaQuery.of(context).size.height,
-            // ),
             width: double.infinity,
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
@@ -72,7 +75,7 @@ class _GymDetailsScreenState extends State<GymDetailsScreen> {
                   color: Colors.grey.withOpacity(0.5),
                   spreadRadius: 5,
                   blurRadius: 7,
-                  offset: const Offset(0, 3), // changes position of shadow
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
@@ -130,20 +133,6 @@ class _GymDetailsScreenState extends State<GymDetailsScreen> {
                             onPageChanged: (value) {
                               imgIndex = value;
                             },
-                            // options: CarouselOptions(
-                            //   height: 200.h,
-                            //   viewportFraction: 1,
-                            //   initialPage: 0,
-                            //   enableInfiniteScroll: true,
-                            //   reverse: false,
-                            //   autoPlay: true,
-                            //   autoPlayInterval: const Duration(seconds: 5),
-                            //   autoPlayAnimationDuration:
-                            //       const Duration(milliseconds: 800),
-                            //   autoPlayCurve: Curves.fastOutSlowIn,
-                            //   enlargeCenterPage: true,
-                            //   scrollDirection: Axis.horizontal,
-                            // ),
                             children: [
                               for (var i = 0; i < widget.gym.assets.length; i++)
                                 InkWell(
@@ -241,6 +230,58 @@ class _GymDetailsScreenState extends State<GymDetailsScreen> {
                             ),
                           ),
                         ),
+                      (userProvider.user.subscribedGymId == widget.gym.id)
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.verified,
+                                          color: Colors.green),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        context.locale.languageCode == 'ar'
+                                            ? "انت مشترك في هذه الصالة"
+                                            : "You Subscribed to this Gym",
+                                        style: TextStyle(
+                                            fontSize: 14.sp,
+                                            color: Colors.green),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                        (userProvider.user.subscribedGymId == widget.gym.id)
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: Text(
+                                    '${tr('subscription_date')} : ${gymProvider.timestampToString(userProvider.user.dateOfGymSubscription!)}',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(fontSize: 14.sp),
+                                  ),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: Text(
+                              "${context.locale.languageCode == 'ar' ? "عدد المشتركين : " : "Subscribers Count : "}${widget.gym.gymSubscribersCounter}",
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                              ),
+                            ),
+                          ),
+                        ),
                         const SizedBox(
                           height: 10,
                         ),
@@ -328,7 +369,112 @@ class _GymDetailsScreenState extends State<GymDetailsScreen> {
                                         ],
                                       ),
                                     )
-                                  : Container(),
+                                  : Column(
+                                      children: [
+                                        (userProvider.user.isSubscribedToGym) ||
+                                                (userProvider.isAdmin)
+                                            ? const SizedBox.shrink()
+                                            : MaterialButton(
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.0)),
+                                                color: kSecondaryColor!,
+                                                onPressed: () async {
+                                                  To(SubscriptionPaymentScreen(
+                                                      gym: widget.gym));
+                                                },
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    const Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .only(end: 8.0),
+                                                      child: Icon(
+                                                        Icons.add,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      tr('subscription_request'),
+                                                      style: TextStyle(
+                                                          fontSize: 18.sp,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                        MaterialButton(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0)),
+                                          color: kSecondaryColor!,
+                                          onPressed: () async {
+                                            String chatID = '';
+                                            await FirebaseFirestore.instance
+                                                .collection('chats')
+                                                .where(
+                                                  'userID',
+                                                  isEqualTo: userProvider
+                                                      .getCurrentUserId(),
+                                                )
+                                                .where('trainerID',
+                                                    isEqualTo:
+                                                        widget.gym.gymOwnerId
+                                                    // Trainer Id here  will be   Gym Owner Id
+                                                    )
+                                                .get()
+                                                .then(
+                                              (snapshot) {
+                                                if (snapshot.size == 0) return;
+                                                if (!snapshot
+                                                        .docs.first.exists ||
+                                                    snapshot.docs.first
+                                                        .data()
+                                                        .isEmpty) return;
+                                                chatID = snapshot.docs.first.id;
+                                              },
+                                            );
+                                            if (chatID.isEmpty) {
+                                              await FirebaseFirestore.instance
+                                                  .collection('chats')
+                                                  .add({
+                                                'userID': userProvider
+                                                    .getCurrentUserId(),
+                                                'trainerID':
+                                                    widget.gym.gymOwnerId,
+                                                'messages': [],
+                                              }).then((docRef) =>
+                                                      chatID = docRef.id);
+                                            }
+                                            To(ChatScreen(chatID: chatID));
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const Padding(
+                                                padding:
+                                                    EdgeInsetsDirectional.only(
+                                                        end: 8.0),
+                                                child: Icon(
+                                                  Ionicons.chatbox,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              Text(
+                                                tr('contact_us'),
+                                                style: TextStyle(
+                                                    fontSize: 18.sp,
+                                                    color: Colors.white),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    )
                             ],
                           ),
                         ),

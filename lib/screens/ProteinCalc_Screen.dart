@@ -9,6 +9,8 @@ import 'package:tamrini/provider/proten_calculator_provider.dart';
 import 'package:tamrini/utils/constants.dart';
 import 'package:tamrini/utils/widgets/global%20Widgets.dart';
 
+import '../provider/ThemeProvider.dart';
+
 class ProteinCalculatorScreen extends StatefulWidget {
   final void Function(Map<String, dynamic> newData)? onSave;
 
@@ -43,8 +45,7 @@ class _ProteinCalculatorScreenState extends State<ProteinCalculatorScreen> {
     super.initState();
     _activityController =
         FixedExtentScrollController(initialItem: _selectedActivity);
-    // TODO : ADS
-    // Provider.of<ThemeProvider>(context, listen: false).loadRewardedAd();
+     Provider.of<ThemeProvider>(context, listen: false).loadRewardedAd();
     _purposeController =
         FixedExtentScrollController(initialItem: _selectedPurpose);
   }
@@ -56,10 +57,9 @@ class _ProteinCalculatorScreenState extends State<ProteinCalculatorScreen> {
             listen: false)
         .reset();
 
-    // TODO : ADS
-    // Provider.of<ThemeProvider>(navigationKey.currentState!.context,
-    //         listen: false)
-    //     .showRewardedAd();
+     Provider.of<ThemeProvider>(navigationKey.currentState!.context,
+            listen: false)
+        .showRewardedAd();
   }
 
   // This shows a CupertinoModalPopup with a reasonable fixed height which hosts CupertinoPicker.

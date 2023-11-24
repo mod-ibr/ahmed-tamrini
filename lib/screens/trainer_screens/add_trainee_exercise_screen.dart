@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,15 +37,129 @@ class AddTraineeExerciseScreen extends StatefulWidget {
 }
 
 class _AddTraineeExerciseScreen extends State<AddTraineeExerciseScreen> {
+//! start pagination data
+  int _current = 1;
+  bool isFullScreen = true;
+  List<Widget> assets = [];
+  final int _limit = 10;
+  int counter = 0;
+  bool _hasNextPage = true;
+  bool _isFirstLoadRunning = false;
+  bool _isLoadMoreRunning = false;
+  List<ExerciseData> loadedExercise = [];
+  late ScrollController _controller;
+
+  resetLoadedExercise() {
+    loadedExercise = [];
+    counter = 0;
+    _hasNextPage = true;
+    _isFirstLoadRunning = false;
+    _isLoadMoreRunning = false;
+  }
+
+  void _firstLoad() async {
+    List<ExerciseData> allExercise = Provider.of<ExerciseProvider>(
+            navigationKey.currentContext!,
+            listen: false)
+        .selectedExercise;
+    resetLoadedExercise();
+    TextEditingController searchController =
+        Provider.of<ExerciseProvider>(context, listen: false).searchController;
+    if (searchController.text.trimRight().trimLeft().isEmpty) {
+      await Future.delayed(Duration.zero)
+          .then((value) => setState(() => _isFirstLoadRunning = true));
+    }
+
+    await Future.delayed(const Duration(seconds: 2)).then(
+      (value) {
+        loadedExercise = allExercise.sublist(
+          0,
+          _limit <= allExercise.length ? _limit : allExercise.length,
+        );
+
+        counter += _limit;
+        log("Counter Value : $counter");
+
+        setState(() => _isFirstLoadRunning = false);
+      },
+    );
+  }
+
+  void _loadMore() async {
+    List<ExerciseData> allExercise = Provider.of<ExerciseProvider>(
+            navigationKey.currentContext!,
+            listen: false)
+        .selectedExercise;
+    if (_hasNextPage == true &&
+        _isFirstLoadRunning == false &&
+        _isLoadMoreRunning == false &&
+        _controller.position.extentAfter < 300) {
+      setState(() => _isLoadMoreRunning = true);
+      await Future.delayed(const Duration(seconds: 2));
+      final List<ExerciseData> fetchedPosts =
+          getNextItems(allExercise, counter);
+      if (fetchedPosts.isNotEmpty) {
+        counter += _limit;
+        setState(() {
+          log("THe all List lenght : ${allExercise.length}");
+          log("THe loaded List lenght BEFORE ADDING : ${loadedExercise.length}");
+          loadedExercise.addAll(fetchedPosts);
+          log("THe loaded List lenght After ADDING : ${loadedExercise.length}");
+
+          log("Counter Value : $counter");
+          _isLoadMoreRunning = false;
+        });
+      } else {
+        setState(() {
+          _hasNextPage = false;
+          _isLoadMoreRunning = false;
+        });
+      }
+    }
+  }
+
+  List<ExerciseData> getNextItems(
+      List<ExerciseData> selectedExercise, int startIndex) {
+    final endIndex = startIndex + _limit;
+
+    if (startIndex >= selectedExercise.length) {
+      // No more items to load, return an empty list
+      return [];
+    }
+
+    final nextItems = selectedExercise.sublist(
+      startIndex,
+      endIndex <= selectedExercise.length ? endIndex : selectedExercise.length,
+    );
+
+    // List<ExerciseData> nextItems = selectedExercise
+    //     .skip(startIndex)
+    //     .take(_limit) // Take the next 20 items
+    //     .toList();
+
+    return nextItems;
+  }
+
+  @override
+  void initState() {
+    _firstLoad();
+    _controller = ScrollController()..addListener(_loadMore);
+    super.initState();
+  }
+
   @override
   void dispose() {
     Provider.of<ExerciseProvider>(navigationKey.currentContext!, listen: false)
         .clearSearch();
+    _controller.removeListener(_loadMore);
     super.dispose();
   }
 
+  //! End pagination data
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.sizeOf(context).width;
+    double height = MediaQuery.sizeOf(context).height;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -52,7 +168,7 @@ class _AddTraineeExerciseScreen extends State<AddTraineeExerciseScreen> {
         appBar: globalAppBar(tr('exercises')),
         // appBar: globalAppBar("التمارين"),
         body: Consumer<TraineeProvider>(builder: (context, _, child) {
-          return _.exerciseProvider.isLoading
+          return _.exerciseProvider.isLoading || _isFirstLoadRunning
               ? SizedBox(
                   height: MediaQuery.of(context).size.height,
                   child: Center(
@@ -60,77 +176,91 @@ class _AddTraineeExerciseScreen extends State<AddTraineeExerciseScreen> {
                         height: 100.h, width: 100.w),
                   ),
                 )
-              : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      searchBar(_.exerciseProvider.searchController, (value) {
-                        widget.isAll
-                            ? _.exerciseProvider.searchAll()
-                            : _.exerciseProvider.search(widget.exercise.id);
-                        _.exerciseProvider.searchAll();
-                      }),
-                      (_.exerciseProvider.selectedExercise == null ||
-                                  _.exerciseProvider.selectedExercise
-                                      .isEmpty) &&
-                              !_.exerciseProvider.searchController.text.isEmpty
-                          ? Center(
-                              child: Text(
-                                context.locale.languageCode == 'ar'
-                                    ? "لا يوجد تمارين بهذا الإسم"
-                                    : "There are no exercises with this name",
-                              ),
-                            )
-                          : _.exerciseProvider.selectedExercise == null ||
-                                  _.exerciseProvider.selectedExercise.isEmpty
-                              ? Padding(
-                                  padding: EdgeInsets.only(
-                                      top: MediaQuery.of(context).size.height /
-                                              2 -
-                                          100.h),
-                                  child: Center(
-                                    child: Text(tr('no_exercises')),
-                                    // child: Text('لا يوجد تمارين'),
-                                  ),
-                                )
-                              : ListView.separated(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
+              : Column(
+                  children: [
+                    searchBar(_.exerciseProvider.searchController, (value) {
+                      widget.isAll
+                          ? _.exerciseProvider.searchAll()
+                          : _.exerciseProvider.search(widget.exercise.id);
+                      _.exerciseProvider.searchAll();
+                      _firstLoad();
+                    }),
+                    (_.exerciseProvider.selectedExercise == null ||
+                                _.exerciseProvider.selectedExercise.isEmpty) &&
+                            _.exerciseProvider.searchController.text.isNotEmpty
+                        ? Center(
+                            child: Text(
+                              context.locale.languageCode == 'ar'
+                                  ? "لا يوجد تمارين بهذا الإسم"
+                                  : "There are no exercises with this name",
+                            ),
+                          )
+                        : _.exerciseProvider.selectedExercise == null ||
+                                _.exerciseProvider.selectedExercise.isEmpty
+                            ? Padding(
+                                padding: EdgeInsets.only(
+                                    top:
+                                        MediaQuery.of(context).size.height / 2 -
+                                            100.h),
+                                child: Center(
+                                  child: Text(tr('no_exercises')),
+                                  // child: Text('لا يوجد تمارين'),
+                                ),
+                              )
+                            : Expanded(
+                                child: ListView.separated(
+                                  controller: _controller,
+                                  itemCount: loadedExercise.length,
                                   itemBuilder: (context, index) {
-                                    List<Widget> assets = [];
-                                    if (_
-                                                .exerciseProvider
-                                                .selectedExercise[index]
-                                                .assets !=
-                                            null &&
-                                        _
-                                                .exerciseProvider
-                                                .selectedExercise[index]
-                                                .assets!
-                                                .length ==
+                                    assets.clear();
+
+                                    if (loadedExercise[index].assets != null &&
+                                        loadedExercise[index].assets!.length ==
                                             2) {
-                                      assets = distributeAssets(_
-                                          .exerciseProvider
-                                          .selectedExercise[index]
-                                          .assets!);
+                                      assets = distributeAssets(
+                                          loadedExercise[index].assets!);
                                     }
                                     return ExerciseCard(
+                                      selectedExercise: widget.exercise,
+                                      height: height,
+                                      width: width,
                                       dayID: widget.dayID,
-                                      index: index,
                                       assets: assets,
                                       traineeProvider: _,
+                                      exercise: loadedExercise[index],
+                                      current: _current,
+                                      updateCurrent: (value) =>
+                                          _current = value,
                                     );
                                   },
-                                  itemCount: _
-                                      .exerciseProvider.selectedExercise.length,
                                   separatorBuilder:
                                       (BuildContext context, int index) {
                                     return SizedBox(
                                       height: 5.h,
                                     );
                                   },
-                                )
-                    ],
-                  ),
+                                ),
+                              ),
+                    if (_isLoadMoreRunning == true)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 6),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+
+                    // When nothing else to load
+                    if (_hasNextPage == false)
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        color: Colors.white,
+                        child: Center(
+                          child: Text(context.locale.languageCode == "ar"
+                              ? "تم تحميل المحتوي بالكامل"
+                              : "You have fetched all of the content"),
+                        ),
+                      ),
+                  ],
                 );
         }),
       ),
@@ -139,17 +269,28 @@ class _AddTraineeExerciseScreen extends State<AddTraineeExerciseScreen> {
 }
 
 class ExerciseCard extends StatefulWidget {
-  final int index;
+  final Exercise selectedExercise;
+  final ExerciseData exercise;
+  // final int index;
+  final double width, height;
   final String dayID;
   final List<Widget> assets;
   final TraineeProvider traineeProvider;
+  final int? current;
+  final void Function(int)? updateCurrent;
 
   const ExerciseCard(
       {required this.dayID,
-      required this.index,
+      // required this.index,
       required this.assets,
       required this.traineeProvider,
-      Key? key})
+      Key? key,
+      required this.exercise,
+      this.current,
+      this.updateCurrent,
+      required this.width,
+      required this.height,
+      required this.selectedExercise})
       : super(key: key);
 
   @override
@@ -160,39 +301,12 @@ class _ExerciseCardState extends State<ExerciseCard> {
   bool superSetSwitchValue = false;
   bool showSuperSetSwitch = false;
   final _formKey = GlobalKey<FormState>();
-  int _current = 1;
-  bool isFullScreen = true;
-  OverlayEntry? _videoOverlay;
-  List<Widget> assets = [];
-
-  // setFullScreen(bool full) {
-  //   print('############### START OVERLAY');
-  //   if (isFullScreen != full) {
-  //     if (full && _videoOverlay == null) {
-  //       _videoOverlay = OverlayEntry(
-  //         builder: (context) => Positioned.fill(
-  //           child: Center(
-  //             child: assets[_current],
-  //           ),
-  //         ),
-  //       );
-  //       Future.delayed(const Duration())
-  //           .then((value) => Overlay.of(context).insert(_videoOverlay!));
-  //     } else if (!full && _videoOverlay != null) {
-  //       _videoOverlay?.remove();
-  //       _videoOverlay = null;
-  //     }
-  //     debugPrint('changing fullscreen to $full');
-  //     setState(() => isFullScreen = full);
-  //     print('############### START OVERLAY');
-  //   }
-  // }
 
   TextEditingController setsNoController = TextEditingController();
 
   TextEditingController repeatNoController = TextEditingController();
 
-  void addExerciseToTrainee(TraineeProvider _, index) {
+  void addExerciseToTrainee(TraineeProvider _) {
     final isValid = _formKey.currentState!.validate();
     _formKey.currentState!.save();
 
@@ -201,7 +315,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
     }
     _.addExerciseToTrainee(
         TraineeExercise(
-          exercise: _.exerciseProvider.selectedExercise[index],
+          exercise: widget.exercise,
           setsNo: int.parse(setsNoController.text),
           repeatNo: int.parse(repeatNoController.text),
         ),
@@ -214,7 +328,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
 
   void removeExerciseFromTrainee() {
     widget.traineeProvider.removeExerciseFromTrainee(
-      widget.traineeProvider.exerciseProvider.selectedExercise[widget.index],
+      widget.exercise,
       widget.dayID,
     );
 
@@ -225,7 +339,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
 
   void removeSuperSetExerciseFromTrainee() {
     widget.traineeProvider.removeSuperSetFromExercise(
-      widget.traineeProvider.exerciseProvider.selectedExercise[widget.index],
+      widget.exercise,
       widget.dayID,
     );
   }
@@ -249,13 +363,10 @@ class _ExerciseCardState extends State<ExerciseCard> {
           onTap: () {
             widget.traineeProvider.newDayWeekExercises[widget.dayID]!
                     .map((traineeExercise) => traineeExercise.exercise)
-                    .contains(widget.traineeProvider.exerciseProvider
-                        .selectedExercise[widget.index])
-                ? widget.traineeProvider.removeExerciseFromTrainee(
-                    widget.traineeProvider.exerciseProvider
-                        .selectedExercise[widget.index],
-                    widget.dayID)
-                : addExerciseToTrainee(widget.traineeProvider, widget.index);
+                    .contains(widget.exercise)
+                ? widget.traineeProvider
+                    .removeExerciseFromTrainee(widget.exercise, widget.dayID)
+                : addExerciseToTrainee(widget.traineeProvider);
           },
           child: Stack(
             children: [
@@ -269,44 +380,22 @@ class _ExerciseCardState extends State<ExerciseCard> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      widget.traineeProvider.exerciseProvider
-                                      .selectedExercise![widget.index].assets ==
-                                  null ||
-                              widget
-                                  .traineeProvider
-                                  .exerciseProvider
-                                  .selectedExercise[widget.index]
-                                  .assets!
-                                  .isEmpty
+                      widget.exercise.assets == null ||
+                              widget.exercise.assets!.isEmpty
                           ? const SizedBox()
                           : VideoViewer(
-                              title: widget.traineeProvider.exerciseProvider
-                                      .selectedExercise[widget.index].title ??
-                                  "",
-                              // onEnterFullScreen: setFullScreen,
-                              // onExitFullScreen: setFullScreen,
+                              title: widget.exercise.title ?? "",
                               width: width,
                               height: height,
-                              imageUrl: widget.traineeProvider.exerciseProvider
-                                  .selectedExercise[widget.index].assets!.first,
-                              videourl: widget.traineeProvider.exerciseProvider
-                                  .selectedExercise[widget.index].assets!.last,
+                              imageUrl: widget.exercise.assets!.first,
+                              videourl: widget.exercise.assets!.last,
                             ),
-                      // ClipRRect(
-                      //   borderRadius: BorderRadius.circular(10.0),
-                      //   child: CustomImageSlideShow(
-                      //     assets: widget.traineeProvider.exerciseProvider
-                      //         .selectedExercise[widget.index].assets!,
-                      //     children: widget.assets,
-                      //   ),
-                      // ),
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0, right: 10),
                         child: SizedBox(
                           width: double.infinity,
                           child: Text(
-                            widget.traineeProvider.exerciseProvider
-                                .selectedExercise[widget.index].title!,
+                            widget.exercise.title!,
                             textAlign: TextAlign.start,
                             style: TextStyle(
                                 fontSize: 20.sp, fontWeight: FontWeight.bold),
@@ -319,8 +408,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
                         child: SizedBox(
                           width: double.infinity,
                           child: Text(
-                            widget.traineeProvider.exerciseProvider
-                                .selectedExercise[widget.index].description!,
+                            widget.exercise.description!,
                             textAlign: TextAlign.start,
                             maxLines: 2,
                             style: TextStyle(
@@ -421,25 +509,21 @@ class _ExerciseCardState extends State<ExerciseCard> {
                                     value: superSetSwitchValue,
                                     onChanged: (value) {
                                       if (value == true) {
-                                        // showDialog<dynamic>(
-                                        //     context: context,
-                                        //     barrierDismissible: false,
-                                        //     builder: (BuildContext context) {
-                                        //       return ExercisesHomeScreen(
-                                        //         isCourse: true,
-                                        //         dayID: widget.dayID,
-                                        //       );
-                                        //     });
-
-                                        To(ExercisesHomeScreen(
-                                          isCourse: true,
-                                          dayID: widget.dayID,
-                                          mainExercise: widget
-                                              .traineeProvider
-                                              .exerciseProvider
-                                              .selectedExercise[widget.index],
-                                          superSet: true,
-                                        ));
+                                        ExerciseProvider _ = widget
+                                            .traineeProvider.exerciseProvider;
+                                        _.moveToExercise(
+                                            widget.selectedExercise,
+                                            isAll: true,
+                                            isAdd: true,
+                                            dayID: widget.dayID,
+                                            superSet: true,
+                                            mainExercise: widget.exercise);
+                                        // To(ExercisesHomeScreen(
+                                        //   isCourse: true,
+                                        //   dayID: widget.dayID,
+                                        //   mainExercise: widget.exercise,
+                                        //   superSet: true,
+                                        // ));
                                       } else {
                                         // remove superset
                                         removeSuperSetExerciseFromTrainee();
@@ -448,8 +532,6 @@ class _ExerciseCardState extends State<ExerciseCard> {
                                         superSetSwitchValue = value;
                                       });
                                     },
-                                    // trackColor:
-                                    //     Colors.grey.shade200.withOpacity(0.2),
                                   ),
                                 ],
                               ),
@@ -465,12 +547,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
                                           .newDayWeekExercises[widget.dayID]!
                                           .firstWhere((traineeExercise) =>
                                               traineeExercise.exercise!.id ==
-                                              widget
-                                                  .traineeProvider
-                                                  .exerciseProvider
-                                                  .selectedExercise[
-                                                      widget.index]
-                                                  .id)
+                                              widget.exercise.id)
                                           .superSetExercise
                                           ?.title ??
                                       '',
@@ -496,13 +573,11 @@ class _ExerciseCardState extends State<ExerciseCard> {
                     value: widget
                         .traineeProvider.newDayWeekExercises[widget.dayID]!
                         .map((traineeExercise) => traineeExercise.exercise)
-                        .contains(widget.traineeProvider.exerciseProvider
-                            .selectedExercise[widget.index]),
+                        .contains(widget.exercise),
                     onChanged: (value) {
                       value != true
                           ? removeExerciseFromTrainee()
-                          : addExerciseToTrainee(
-                              widget.traineeProvider, widget.index);
+                          : addExerciseToTrainee(widget.traineeProvider);
                     },
                   ),
                 ),
@@ -515,39 +590,39 @@ class _ExerciseCardState extends State<ExerciseCard> {
   }
 }
 
-class VideoWidget extends StatelessWidget {
-  final ExerciseData exercise;
-  final List<Widget> assets;
-  final double width, height;
-  final Function onEnterFullScreen;
-  final Function onExitFullScreen;
-  final int? current;
-  final void Function(int)? updateCurrent;
+// class VideoWidget extends StatelessWidget {
+//   final ExerciseData exercise;
+//   final List<Widget> assets;
+//   final double width, height;
+//   final Function onEnterFullScreen;
+//   final Function onExitFullScreen;
+//   final int? current;
+//   final void Function(int)? updateCurrent;
 
-  const VideoWidget({
-    required this.onEnterFullScreen,
-    required this.onExitFullScreen,
-    required this.exercise,
-    required this.assets,
-    required this.width,
-    required this.height,
-    this.current,
-    this.updateCurrent,
-    Key? key,
-  }) : super(key: key);
+//   const VideoWidget({
+//     required this.onEnterFullScreen,
+//     required this.onExitFullScreen,
+//     required this.exercise,
+//     required this.assets,
+//     required this.width,
+//     required this.height,
+//     this.current,
+//     this.updateCurrent,
+//     Key? key,
+//   }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return (assets.isNotEmpty)
-        ? VideoViewer(
-            title: exercise.title ?? "",
-            // onEnterFullScreen: onEnterFullScreen,
-            // onExitFullScreen: onExitFullScreen,
-            width: width,
-            height: height,
-            imageUrl: exercise.assets!.first,
-            videourl: exercise.assets!.last,
-          )
-        : const SizedBox();
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return (assets.isNotEmpty)
+//         ? VideoViewer(
+//             title: exercise.title ?? "",
+//             // onEnterFullScreen: onEnterFullScreen,
+//             // onExitFullScreen: onExitFullScreen,
+//             width: width,
+//             height: height,
+//             imageUrl: exercise.assets!.first,
+//             videourl: exercise.assets!.last,
+//           )
+//         : const SizedBox();
+//   }
+// }

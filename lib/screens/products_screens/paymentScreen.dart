@@ -21,7 +21,8 @@ class PaymentScreen extends StatefulWidget {
 
 class _PaymentScreenState extends State<PaymentScreen> {
   int _selectedItem = 1;
-  int _selectedItem2 = 1;
+
+  // int _selectedItem2 = 1;
   int _selectedItem3 = 1;
   PaymentMethod _paymentMethod = PaymentMethod.cashOnDelivery;
 
@@ -65,7 +66,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           children: [
                             Text(widget.product.title ?? ''),
                             Text(
-                              " ${formatter.format(widget.product.price)}د.ع",
+                              " ${formatter.format(widget.product.price)}${context.locale.languageCode == 'ar' ? " د.ع" : ' IQD'} ",
                             ),
                           ],
                         ),
@@ -125,7 +126,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       maxLines: 3,
                       minLines: 1,
                       decoration: InputDecoration(
-                        hintText: tr('address'),
+                        hintText: tr('enter_address'),
                         border: const OutlineInputBorder(),
                       ),
                       onChanged: (value) {

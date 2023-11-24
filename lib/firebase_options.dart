@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDnpzXYCZDwRG5Wwz5A93hVqXZ0sLt6rx4',
-    appId: '1:540039956772:android:3254907eeb252f1e500bb1',
+    appId: '1:540039956772:android:eb0adb28ba5040bb500bb1',
     messagingSenderId: '540039956772',
     projectId: 'tamrini-app',
     databaseURL: 'https://tamrini-app-default-rtdb.europe-west1.firebasedatabase.app',
@@ -60,13 +60,13 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCbp0oAJoXzputASM3X5tdtPekpua20D48',
-    appId: '1:540039956772:ios:9e25bb53de91a8fa500bb1',
+    appId: '1:540039956772:ios:8da67bc4b72c455f500bb1',
     messagingSenderId: '540039956772',
     projectId: 'tamrini-app',
     databaseURL: 'https://tamrini-app-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'tamrini-app.appspot.com',
-    androidClientId: '540039956772-5cilarba1jkh11a4vjprp139p1vlut08.apps.googleusercontent.com',
-    iosClientId: '540039956772-0ln7pcipp5alc40kq3fk837n86reg5sm.apps.googleusercontent.com',
-    iosBundleId: 'com.example.tamrini',
+    androidClientId: '540039956772-98kgj9s3pnrvdn92ia3ren42nd7k949v.apps.googleusercontent.com',
+    iosClientId: '540039956772-i52ufmel7nko6k1ag829vkocu8sdodb3.apps.googleusercontent.com',
+    iosBundleId: 'com.tamrini.app',
   );
 }

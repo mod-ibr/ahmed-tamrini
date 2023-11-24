@@ -36,32 +36,38 @@ class UserAvatar extends StatelessWidget {
                 radius: width * 0.165,
                 child: ClipOval(
                   clipBehavior: Clip.antiAliasWithSaveLayer,
-                  child: CachedNetworkImage(
-                    imageUrl: profileImageUrl!,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
-                    placeholder: (context, url) {
-                      if (url.isEmpty) {
-                        return const Icon(
+                  child: (profileImageUrl == null || profileImageUrl!.isEmpty)
+                      ? const Icon(
                           Icons.person_rounded,
                           size: 40,
                           color: Colors.white,
-                        );
-                      }
-                      return Container(
-                        alignment: Alignment.center,
-                        width: 50,
-                        height: 50,
-                        child: const CircularProgressIndicator(),
-                      );
-                    },
-                    errorWidget: (context, url, error) => const Icon(
-                      Icons.person_rounded,
-                      size: 40,
-                      color: Colors.white,
-                    ),
-                  ),
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: profileImageUrl!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                          placeholder: (context, url) {
+                            if (url.isEmpty) {
+                              return const Icon(
+                                Icons.person_rounded,
+                                size: 40,
+                                color: Colors.white,
+                              );
+                            }
+                            return Container(
+                              alignment: Alignment.center,
+                              width: 50,
+                              height: 50,
+                              child: const CircularProgressIndicator(),
+                            );
+                          },
+                          errorWidget: (context, url, error) => const Icon(
+                            Icons.person_rounded,
+                            size: 40,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ),
             ),

@@ -6,7 +6,9 @@ import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tamrini/firebase_stuff/firestore.dart';
+import 'package:tamrini/model/gym.dart';
 import 'package:tamrini/model/product.dart';
 import 'package:tamrini/provider/user_provider.dart';
 import 'package:tamrini/screens/products_screens/products_screens.dart';
@@ -14,8 +16,10 @@ import 'package:tamrini/utils/widgets/global%20Widgets.dart';
 
 import '../model/order.dart' as ord;
 import '../model/payment.dart';
+import '../model/user.dart';
 import '../utils/helper_functions.dart';
 import 'Upload_Image_provider.dart';
+import 'gym_provider.dart';
 
 enum PaymentMethod { cashOnDelivery, moneyTransfer }
 
@@ -714,6 +718,235 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
+  Future gymSubscription({
+    required String address,
+    required String notes,
+    required Gym gym,
+    required PaymentMethod paymentMethod,
+    String? image,
+  }) async {
+    GymProvider gymProvider =
+        Provider.of<GymProvider>(navigationKey.currentContext!, listen: false);
+    UserProvider userProvider =
+        Provider.of<UserProvider>(navigationKey.currentContext!, listen: false);
+    showLoaderDialog(navigationKey.currentContext!);
+    var data;
+
+    try {
+      if (paymentMethod == PaymentMethod.cashOnDelivery) {
+        data = ord.Order(
+          address: address,
+          notes: notes,
+          gymData: ord.GymData(
+              gymId: gym.id,
+              gymName: gym.name,
+              gymAssets: gym.assets[0],
+              price: gym.price,
+              subscriberId: userProvider.user.uid),
+          phoneNumber: userProvider.user.phone,
+          user: userProvider.user.name,
+          status: 'pending',
+          createdAt: Timestamp.now(),
+          paymentMethod: 'cashOnDelivery',
+        );
+      } else {
+        data = ord.Order(
+          address: address,
+          notes: notes,
+          gymData: ord.GymData(
+              gymId: gym.id,
+              gymName: gym.name,
+              gymAssets: gym.assets[0],
+              price: gym.price,
+              subscriberId: userProvider.user.uid),
+          phoneNumber: userProvider.user.phone,
+          user: userProvider.user.name,
+          status: 'pending',
+          createdAt: Timestamp.now(),
+          paymentMethod: 'online',
+          image: image,
+        );
+      }
+      await FirebaseFirestore.instance
+          .collection('orders')
+          .doc('data')
+          .collection('data')
+          .add(data.toJson());
+      await gymProvider.subscribeToGym(
+          // To Subscribe to Gym Owner And send Notification to him
+          user: userProvider.user,
+          gym: gym);
+
+      pop();
+
+      AwesomeDialog(
+        context: navigationKey.currentContext!,
+        dialogType: DialogType.success,
+        animType: AnimType.bottomSlide,
+        title: tr('completed_request'),
+        desc: tr('contact_soon'),
+        btnOkOnPress: () {
+          pop();
+          pop();
+        },
+      ).show();
+    } catch (error) {
+      print(error);
+      pop();
+
+      AwesomeDialog(
+        context: navigationKey.currentContext!,
+        dialogType: DialogType.ERROR,
+        animType: AnimType.BOTTOMSLIDE,
+        title: tr('wrong'),
+        desc: tr('error_while_request'),
+        btnOkOnPress: () {
+          pop();
+        },
+      ).show();
+    }
+  }
+
+  Future<User?> getUserById(String userId) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final DocumentReference userDocRef =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+      final DocumentSnapshot userDocSnapshot = await userDocRef.get();
+
+      if (userDocSnapshot.exists) {
+        final Map<String, dynamic>? userData =
+            userDocSnapshot.data() as Map<String, dynamic>?;
+        if (userData != null) {
+          User user = User.fromMap(userData, userId);
+          log("**************************************************************** Trainer Name :${user.name}");
+          isLoading = false;
+          notifyListeners();
+          return user;
+        } else {
+          log('No data found in the Trainer document for ID: $userId');
+          isLoading = false;
+          notifyListeners();
+          AwesomeDialog(
+                  context: navigationKey.currentContext!,
+                  dialogType: DialogType.error,
+                  animType: AnimType.BOTTOMSLIDE,
+                  title:
+                      navigationKey.currentContext!.locale.languageCode == 'ar'
+                          ? "خطاء"
+                          : "Error",
+                  desc:
+                      navigationKey.currentContext!.locale.languageCode == 'ar'
+                          ? "حاول مجددا في وقت لاحق"
+                          : "Try again later",
+                  btnOkOnPress: () {
+                    // navigationKey.currentState!.pop();
+                  })
+              .show();
+          return null;
+        }
+      } else {
+        log('Can\'t get this Trainer, the document not found for ID: $userId');
+        isLoading = false;
+        notifyListeners();
+        AwesomeDialog(
+                context: navigationKey.currentContext!,
+                dialogType: DialogType.error,
+                animType: AnimType.BOTTOMSLIDE,
+                title: navigationKey.currentContext!.locale.languageCode == 'ar'
+                    ? "خطاء"
+                    : "Error",
+                desc: navigationKey.currentContext!.locale.languageCode == 'ar'
+                    ? "حاول مجددا في وقت لاحق"
+                    : "Try again later",
+                btnOkOnPress: () {
+                  // navigationKey.currentState!.pop();
+                })
+            .show();
+        return null;
+      }
+    } catch (error) {
+      log('Error: $error');
+      isLoading = false;
+      notifyListeners();
+      AwesomeDialog(
+              context: navigationKey.currentContext!,
+              dialogType: DialogType.error,
+              animType: AnimType.BOTTOMSLIDE,
+              title: navigationKey.currentContext!.locale.languageCode == 'ar'
+                  ? "خطاء"
+                  : "Error",
+              desc: navigationKey.currentContext!.locale.languageCode == 'ar'
+                  ? "حاول مجددا في وقت لاحق"
+                  : "Try again later",
+              btnOkOnPress: () {
+                // navigationKey.currentState!.pop();
+              })
+          .show();
+      return null;
+    }
+  }
+
+  Future<Gym?> getGymById(String gymId) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+          .collection('gyms')
+          .doc('data')
+          .collection('data')
+          .doc(gymId)
+          .get();
+
+      if (docSnapshot.exists) {
+        final gymData = docSnapshot.data() as Map<String, dynamic>;
+        isLoading = false;
+        notifyListeners();
+        return Gym.fromJson(gymData, docSnapshot.id, 0.0);
+      } else {
+        isLoading = false;
+        notifyListeners();
+        AwesomeDialog(
+                context: navigationKey.currentContext!,
+                dialogType: DialogType.error,
+                animType: AnimType.BOTTOMSLIDE,
+                title: navigationKey.currentContext!.locale.languageCode == 'ar'
+                    ? "خطاء"
+                    : "Error",
+                desc: navigationKey.currentContext!.locale.languageCode == 'ar'
+                    ? "حاول مجددا في وقت لاحق"
+                    : "Try again later",
+                btnOkOnPress: () {
+                  // navigationKey.currentState!.pop();
+                })
+            .show();
+        return null;
+      }
+    } catch (e) {
+      log('Error retrieving gym data: $e');
+      isLoading = false;
+      notifyListeners();
+      AwesomeDialog(
+              context: navigationKey.currentContext!,
+              dialogType: DialogType.error,
+              animType: AnimType.BOTTOMSLIDE,
+              title: navigationKey.currentContext!.locale.languageCode == 'ar'
+                  ? "خطاء"
+                  : "Error",
+              desc: navigationKey.currentContext!.locale.languageCode == 'ar'
+                  ? "حاول مجددا في وقت لاحق"
+                  : "Try again later",
+              btnOkOnPress: () {
+                // navigationKey.currentState!.pop();
+              })
+          .show();
+      return null;
+    }
+  }
+
   Future<void> getAllOrdersForAdmin() async {
     try {
       isLoading = true;
@@ -759,20 +992,54 @@ class ProductProvider with ChangeNotifier {
 
   Future<void> deleteOrder({required String id}) async {
     try {
-      var data = orders.where((element) => element.id == id).first.image;
+      showLoaderDialog(navigationKey.currentContext!);
+      String? data = orders.where((element) => element.id == id).first.image;
       if (!userProvider.isAdmin) return;
       await FirebaseFirestore.instance
           .collection('orders')
           .doc('data')
           .collection('data')
           .doc(id)
-          .delete();
-      await UploadProvider().deleteAllAssets([data!]);
+          .delete()
+          .then((value) async {
+        if (data != null && data.isNotEmpty) {
+          await UploadProvider().deleteAllAssets([data]);
+        }
+      });
+      orders.removeWhere((element) {
+        return element.id == id;
+      });
 
-      orders.removeWhere((element) => element.id == id);
+      pop();
+      AwesomeDialog(
+        context: navigationKey.currentContext!,
+        dialogType: DialogType.success,
+        animType: AnimType.bottomSlide,
+        title: navigationKey.currentContext!.locale.languageCode == 'ar'
+            ? "تم الحذف"
+            : "Deleted",
+        desc: navigationKey.currentContext!.locale.languageCode == 'ar'
+            ? "تم حذف الطلب بنجاح"
+            : "Order deleted Successfully",
+        btnOkOnPress: () {
+          // pop();
+          // pop();
+        },
+      ).show();
       notifyListeners();
     } catch (error) {
-      print(error);
+      log("ERROR While Delete An Order : $error");
+      pop();
+      AwesomeDialog(
+        context: navigationKey.currentContext!,
+        dialogType: DialogType.ERROR,
+        animType: AnimType.BOTTOMSLIDE,
+        title: tr('wrong'),
+        desc: tr('error_while_request'),
+        btnOkOnPress: () {
+          pop();
+        },
+      ).show();
     }
   }
 }

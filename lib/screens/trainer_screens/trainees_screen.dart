@@ -14,7 +14,7 @@ class TraineesScreen extends StatelessWidget {
     TextEditingController searchController = TextEditingController();
     return Scaffold(
       persistentFooterButtons: [adBanner()],
-      appBar: globalAppBar(tr('subscribers')),
+      appBar: globalAppBar(tr('trainees')),
       // appBar: globalAppBar("المشتركين"),
       body: Consumer<TraineeProvider>(builder: (context, _, child) {
         return _.isLoading

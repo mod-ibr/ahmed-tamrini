@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class User {
   String name;
   String email;
@@ -27,6 +29,9 @@ class User {
   List<String>? gymImage;
   //! Gym Data
   String? gymId;
+  String? subscribedGymId;
+  bool isSubscribedToGym;
+  Timestamp? dateOfGymSubscription;
   //! Publisher Data
   bool? isPublisher;
   String? publisherSummary;
@@ -60,6 +65,10 @@ class User {
     this.gymImage,
     //! Gym Data
     this.gymId,
+    this.subscribedGymId,
+    this.isSubscribedToGym = false,
+    this.dateOfGymSubscription,
+
     //! Publisher Data
     this.isPublisher,
     this.publisherSummary,
@@ -93,6 +102,9 @@ class User {
       'gymImage': gymImage ?? [] as List<String>,
       //! Gym Data
       'gymId': gymId ?? "",
+      'subscribedGymId': subscribedGymId ?? "",
+      'isSubscribedToGym': isSubscribedToGym,
+      'dateOfGymSubscription': dateOfGymSubscription ?? Timestamp.now(),
       //! Publisher Data
       'isPublisher': isPublisher ?? false,
       'publisherSummary': publisherSummary ?? "",
@@ -121,6 +133,7 @@ class User {
           map.containsKey('notifications') ? map['notifications'] : [],
       isVerifiedEmail: map['isVerifiedEmail'] ?? false,
       pendingEmail: map['pendingEmail'] ?? "",
+      dateOfGymSubscription: map['dateOfGymSubscription'] ?? Timestamp.now(),
       //! Trainer Data
       description: (map['achievements'] != null &&
               map['achievements'].toString().isNotEmpty)
@@ -144,6 +157,12 @@ class User {
       gymId: (map['gymId'] != null && map['gymId'].toString().isNotEmpty)
           ? map['gymId']
           : "",
+      subscribedGymId: (map['subscribedGymId'] != null &&
+              map['subscribedGymId'].toString().isNotEmpty)
+          ? map['subscribedGymId']
+          : "",
+      isSubscribedToGym:
+          (map['isSubscribedToGym'] != null) ? map['isSubscribedToGym'] : false,
       //! Publisher Data
       isPublisher: (map['isPublisher'] != null) ? map['isPublisher'] : false,
       publisherSummary: (map['publisherSummary'] != null &&

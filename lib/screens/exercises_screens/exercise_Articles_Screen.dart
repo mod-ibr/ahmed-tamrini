@@ -29,35 +29,9 @@ class ExerciseArticlesScreen extends StatefulWidget {
 }
 
 class _ExerciseArticlesScreen extends State<ExerciseArticlesScreen> {
-  int _current = 1;
-  bool isFullScreen = true;
-  OverlayEntry? _videoOverlay;
-  List<Widget> assets = [];
-
-  // setFullScreen(bool full) {
-  //   print('############### START OVERLAY');
-  //   if (isFullScreen != full) {
-  //     if (full && _videoOverlay == null) {
-  //       _videoOverlay = OverlayEntry(
-  //         builder: (context) => Positioned.fill(
-  //           child: Center(
-  //             child: assets[_current],
-  //           ),
-  //         ),
-  //       );
-  //       Future.delayed(const Duration())
-  //           .then((value) => Overlay.of(context).insert(_videoOverlay!));
-  //     } else if (!full && _videoOverlay != null) {
-  //       _videoOverlay?.remove();
-  //       _videoOverlay = null;
-  //     }
-  //     debugPrint('changing fullscreen to $full');
-  //     setState(() => isFullScreen = full);
-  //     print('############### START OVERLAY');
-  //   }
-  // }
-
 //! start pagination data
+  int _current = 1;
+  List<Widget> assets = [];
   final int _limit = 10;
   int counter = 0;
   bool _hasNextPage = true;
@@ -474,14 +448,10 @@ class ExerciseCard extends StatelessWidget {
   final ExerciseData exercise;
   final List<Widget> assets;
   final double width, height;
-  // final Function onEnterFullScreen;
-  // final Function onExitFullScreen;
   final int? current;
   final void Function(int)? updateCurrent;
 
   const ExerciseCard({
-    // required this.onEnterFullScreen,
-    // required this.onExitFullScreen,
     required this.exercise,
     required this.assets,
     required this.width,
@@ -497,9 +467,7 @@ class ExerciseCard extends StatelessWidget {
       children: [
         (assets.isNotEmpty)
             ? VideoViewer(
-              title:  exercise.title ?? '',
-                // onEnterFullScreen: onEnterFullScreen,
-                // onExitFullScreen: onExitFullScreen,
+                title: exercise.title ?? '',
                 width: width,
                 height: height,
                 imageUrl: exercise.assets!.first,

@@ -81,6 +81,7 @@ Future<List<Map<String, dynamic>>> downloadUsersData() async {
             'username': temp['username'],
             'phone': temp['phone'],
             'avatar': temp['profileImgurl'] ?? "",
+            'token': temp['token'] ?? "",
             'docID': data.id,
           },
         );
