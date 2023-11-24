@@ -127,6 +127,10 @@ dev_dependencies:
   rename: ^3.0.1
   flutter_test:
     sdk: flutter
+flutter_icons:
+  image_path: "assets/icon/icon.png"  
+  android: true
+  ios: true
 
 flutter:
   # The following line ensures that the Material Icons font is
