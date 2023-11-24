@@ -65,8 +65,8 @@ class DefaultFirebaseOptions {
     projectId: 'tamrini-app',
     databaseURL: 'https://tamrini-app-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'tamrini-app.appspot.com',
-    androidClientId: '540039956772-98kgj9s3pnrvdn92ia3ren42nd7k949v.apps.googleusercontent.com',
-    iosClientId: '540039956772-i52ufmel7nko6k1ag829vkocu8sdodb3.apps.googleusercontent.com',
+    androidClientId: '540039956772-2nmp79crlaeqne85p2trs7mank0su6dg.apps.googleusercontent.com',
+    iosClientId: '540039956772-cco4naqje3ea6m7r383cls5je25qn43g.apps.googleusercontent.com',
     iosBundleId: 'com.tamrini.app',
   );
 }

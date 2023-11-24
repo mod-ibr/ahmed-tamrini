@@ -8,43 +8,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:540039956772:android:3254907eeb252f1e500bb1",
-        "android_client_info": {
-          "package_name": "com.example.tamrini"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "540039956772-91h7e8iilk8gobibebreugr8mku6j4jt.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDnpzXYCZDwRG5Wwz5A93hVqXZ0sLt6rx4"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "540039956772-91h7e8iilk8gobibebreugr8mku6j4jt.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "540039956772-cco4naqje3ea6m7r383cls5je25qn43g.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.tamrini.app",
-                "app_store_id": "1571336937"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:540039956772:android:eb0adb28ba5040bb500bb1",
         "android_client_info": {
           "package_name": "com.tamrini1.com"
@@ -117,11 +80,10 @@
               "client_type": 3
             },
             {
-              "client_id": "540039956772-cco4naqje3ea6m7r383cls5je25qn43g.apps.googleusercontent.com",
+              "client_id": "540039956772-0ln7pcipp5alc40kq3fk837n86reg5sm.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.tamrini.app",
-                "app_store_id": "1571336937"
+                "bundle_id": "com.example.tamrini"
               }
             }
           ]
