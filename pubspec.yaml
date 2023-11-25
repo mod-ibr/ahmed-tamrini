@@ -42,7 +42,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   curved_navigation_bar: ^1.0.3
   device_preview: ^1.1.0
-  open_file: ^3.3.2
   dio: ^4.0.6
   easy_localization: ^3.0.0
   firebase_analytics: ^10.1.0
@@ -87,7 +86,7 @@ dependencies:
   intl_utils: null
   ionicons: ^0.1.2
   mocktail: null
-  open_filex: ^4.3.2
+  open_filex: ^4.3.4
   otp_timer_button: ^1.1.0
   package_info_plus: ^3.0.2
   path_provider: ^2.0.13
@@ -123,12 +122,17 @@ dependency_overrides:
   youtube_player_flutter:
     path: packages/youtube_player_flutter
 dev_dependencies:
-  flutter_lints: ^2.0.0
   flutter_launcher_icons: "^0.13.1"
   rename: ^3.0.1
+  flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
 
+flutter_launcher_icons:
+  image_path: "assets/icon/icon.png"  
+  android: true
+  ios: true
+  remove_alpha_ios: true
 flutter:
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

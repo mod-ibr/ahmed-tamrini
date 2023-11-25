@@ -14,9 +14,10 @@ import 'package:tamrini/screens/setting_screens/orders_screens.dart';
 import 'package:tamrini/screens/setting_screens/payment_methods_screen.dart';
 import 'package:tamrini/utils/constants.dart';
 import 'package:tamrini/utils/widgets/global%20Widgets.dart';
+import 'package:open_filex/open_filex.dart';
 
 import '../../utils/save_pdf_file.dart';
-import 'package:open_file/open_file.dart' as of;
+// import 'package:open_file/open_file.dart' as of;
 
 class AdminControlScreen extends StatefulWidget {
   const AdminControlScreen({Key? key}) : super(key: key);
@@ -83,7 +84,7 @@ class _AdminControlScreenState extends State<AdminControlScreen> {
 
         await pdfFile.writeAsBytes(pdfData);
         log("String generatedPdfFilePath : ${pdfFile.path} ");
-        openPDFFile(pdfFile.path);
+        await OpenFilex.open(pdfFile.path);
       }
       setState(() {
         isLoading = false;
@@ -96,18 +97,6 @@ class _AdminControlScreenState extends State<AdminControlScreen> {
         isLoading = false;
       });
       log("ERROR While download users data L: $e");
-    }
-  }
-
-  void openPDFFile(String filePath) async {
-    try {
-      final result = await of.OpenFile.open(filePath);
-
-      if (result.type == of.ResultType.done) {
-        log('File opened with success!');
-      }
-    } catch (e) {
-      log('Error opening the file: $e');
     }
   }
 
