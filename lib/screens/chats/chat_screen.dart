@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,7 +6,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:tamrini/utils/app_constants.dart';
+import 'package:tamrini/utils/constants.dart';
 
 import '../../data/user_data.dart';
 import '../../provider/user_provider.dart';
@@ -17,7 +21,10 @@ class ChatScreen extends StatefulWidget {
 
   final String chatID;
 
-  const ChatScreen({super.key, required this.chatID});
+  const ChatScreen({
+    super.key,
+    required this.chatID,
+  });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -28,6 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
   List<Map<String, dynamic>> users = [];
   bool isTrainer = false;
   String userName = '';
+  String token = '';
   List<Map<String, dynamic>> messages = [];
 
   final messageTextController = TextEditingController();
@@ -44,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(() => _loading = false);
   }
 
-  void sendMessage() {
+  void sendMessage() async {
     if (messageText.isNotEmpty) {
       Timestamp currTime = Timestamp.now();
 
@@ -62,11 +70,91 @@ class _ChatScreenState extends State<ChatScreen> {
       }, SetOptions(merge: true));
 
       messageTextController.clear();
+      await sendNotification(
+          senderUserName:
+              Provider.of<UserProvider>(context, listen: false).user.name,
+          token: token,
+          chatId: widget.chatID);
     } else {
       Fluttertoast.showToast(
           msg: context.locale.languageCode == 'ar'
               ? 'اكتب رسالتك أولا!'
               : 'Write your message first!');
+    }
+  }
+
+  Future<void> sendNotification(
+      {required String senderUserName,
+      required String token,
+      required String chatId}) async {
+    try {
+      log("Receiver Token : $token");
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'key=$kServerToken',
+        },
+        body: jsonEncode(
+          <String, dynamic>{
+            'notification': <String, dynamic>{
+              'title': (context.locale.languageCode == 'ar')
+                  ? 'رسالة جديدة'
+                  : "New Message",
+              'body': (context.locale.languageCode == 'ar')
+                  ? 'رسالة جديدة من  $senderUserName'
+                  : "New Message from $senderUserName",
+            },
+            'priority': 'high',
+            'data': <String, dynamic>{
+              'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+              'token': token,
+              'chatId': chatId,
+              "type": 'chat'
+            },
+            'to': token,
+          },
+        ),
+      );
+      await updateReceiverNotifications(
+          token: token, senderUserName: senderUserName);
+    } catch (e) {
+      log("Error while send notification : $e");
+    }
+  }
+
+  Future<void> updateReceiverNotifications(
+      {required String token, required String senderUserName}) async {
+    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('token', isEqualTo: token)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      // Loop through the documents and update the 'failed' field
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        final String userId = doc.id;
+
+        // Update the 'failed' field to your desired value
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .update({
+          'notification': true,
+          'notifications': FieldValue.arrayUnion([
+            {
+              'title': 'رسالة جديدة',
+              'body': 'رسالة جديدة من  $senderUserName',
+              'createsAt': Timestamp.now(),
+            }
+          ])
+        });
+
+        print('Updated "failed" field for user with ID: $userId');
+      }
+    } else {
+      // No admin users found
+      print('No admin users found.');
     }
   }
 
@@ -82,7 +170,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     isTrainer = Provider.of<UserProvider>(context).user.role == 'captain';
     return _loading
-        ? const Center(child: CircularProgressIndicator())
+        ? const Scaffold(body: Center(child: CircularProgressIndicator()))
         : StreamBuilder<DocumentSnapshot>(
             stream: getChatStream(),
             builder: (context, snapshot) {
@@ -124,6 +212,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 int index = users.indexWhere((user) => user['docID'] == docID);
                 if (index != -1) {
                   userName = users[index]['name'];
+                  token = users[index]['token'];
+                  log("********************************** token : $token");
                 } else {
                   return Center(
                     child: ButtonWidget(
@@ -136,21 +226,23 @@ class _ChatScreenState extends State<ChatScreen> {
               }
               return Scaffold(
                 appBar: globalAppBar(userName),
-                body: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    MessagesStream(messages: messages),
-                    StatefulBuilder(
-                      builder: (context, setState) {
-                        return Container(
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              top: BorderSide(color: Colors.grey, width: 0.5),
+                body: SafeArea(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      MessagesStream(messages: messages),
+                      StatefulBuilder(
+                        builder: (context, setState) {
+                          return Container(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 16.sp,
+                              horizontal: 8.sp,
                             ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            decoration: const BoxDecoration(
+                              border:
+                                  Border(top: BorderSide(color: Colors.grey)),
+                            ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
@@ -170,20 +262,32 @@ class _ChatScreenState extends State<ChatScreen> {
                                         vertical: 10.0,
                                       ),
                                       border: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      focusedErrorBorder: InputBorder.none,
                                     ),
                                   ),
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.send),
-                                  onPressed: () => sendMessage(),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: kSecondaryColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.send),
+                                    onPressed: () => sendMessage(),
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               );
             },

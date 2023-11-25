@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -5,12 +6,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 import 'package:tamrini/data/location.dart';
 import 'package:tamrini/firebase_stuff/firestore.dart';
 import 'package:tamrini/provider/user_provider.dart';
+import 'package:tamrini/utils/widgets/loading_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:http/http.dart' as http;
 import '../model/gym.dart';
+import '../model/user.dart';
+import '../utils/app_constants.dart';
 import '../utils/helper_functions.dart';
 import '../utils/widgets/global Widgets.dart';
 import 'Upload_Image_provider.dart';
@@ -21,7 +26,12 @@ class GymProvider with ChangeNotifier {
   bool isLoading = false;
   String? selectedSortBy;
   TextEditingController searchController = TextEditingController();
-
+//! Start  Gym Subscribers
+  List<User> subscribers = [],
+      _originalSubscribers = [],
+      pendingSubscribers = [],
+      _originalPendingSubscribers = [];
+//! End Gym Subscribers
   List<Gym> get gyms {
     return [..._gyms];
   }
@@ -406,5 +416,466 @@ class GymProvider with ChangeNotifier {
     } else {
       throw 'Could not open the map.';
     }
+  }
+//! ------------ Subscription to Gym Part ---------------
+
+  Future<void> subscribeToGym({required User user, required Gym gym}) async {
+    try {
+      showLoaderDialog(navigationKey.currentContext!);
+      String? token = await getUserTokenByUserId(gym.gymOwnerId);
+      if (token != null && token.isNotEmpty) {
+        await FirebaseFirestore.instance
+            .collection('gyms')
+            .doc('data')
+            .collection('data')
+            .doc(gym.id)
+            .collection('pendingSubscribers')
+            .doc(user.uid)
+            .set(user.toMap())
+            .then((value) => sendNotificationToGymOwner(
+                userName: user.name, token: token, userId: user.uid));
+
+        pop();
+
+        notifyListeners();
+
+        // AwesomeDialog(
+        //   context: navigationKey.currentContext!,
+        //   dialogType: DialogType.success,
+        //   animType: AnimType.bottomSlide,
+        //   title: tr('request_sent_successfully'),
+        //   desc: tr('contact_gym_owner'),
+        //   btnOkOnPress: () {
+        //     pop();
+        //     pop();
+        //   },
+        // ).show();
+      }
+    } catch (error) {
+      debugPrint(error.toString());
+
+      // AwesomeDialog(
+      //   context: navigationKey.currentContext!,
+      //   dialogType: DialogType.error,
+      //   animType: AnimType.bottomSlide,
+      //   title: tr('wrong'),
+      //   desc: tr('try_again'),
+      //   btnOkOnPress: () {},
+      // ).show();
+    }
+  }
+
+  Future<void> sendNotificationToGymOwner(
+      {required String userName,
+      required String token,
+      required String userId}) async {
+    try {
+      log("Receiver Token : $token");
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'key=$kServerToken',
+        },
+        body: jsonEncode(
+          <String, dynamic>{
+            'notification': <String, dynamic>{
+              'title':
+                  (navigationKey.currentContext!.locale.languageCode == 'ar')
+                      ? 'طلب انضمام جديد'
+                      : "New Subscription",
+              'body':
+                  (navigationKey.currentContext!.locale.languageCode == 'ar')
+                      ? '$userName طلب الإنضمام الي صالة الجيم'
+                      : "$userName requested to subscribe to The Gym.",
+            },
+            'priority': 'high',
+            'data': <String, dynamic>{
+              'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+              'token': token,
+              'userId': userId,
+              "type": 'gym_subscription'
+            },
+            'to': token,
+          },
+        ),
+      );
+      await updateGymOwnerNotifications(token: token, userName: userName);
+    } catch (e) {
+      log("Error while send notification : $e");
+    }
+  }
+
+  Future<void> updateGymOwnerNotifications(
+      {required String token, required String userName}) async {
+    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('token', isEqualTo: token)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      // Loop through the documents and update the 'failed' field
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        final String userId = doc.id;
+
+        // Update the 'failed' field to your desired value
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .update({
+          'notification': true,
+          'notifications': FieldValue.arrayUnion([
+            {
+              'title': 'طلب انضمام جديد',
+              'body': '$userName طلب الإنضمام الي صالة الجيم',
+              'createsAt': Timestamp.now(),
+            }
+          ])
+        });
+
+        print('Updated "failed" field for user with ID: $userId');
+      }
+    } else {
+      // No admin users found
+      print('No admin users found.');
+    }
+  }
+
+  Future<String?> getUserTokenByUserId(String userId) async {
+    try {
+      final DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      if (documentSnapshot.exists) {
+        final String token = documentSnapshot['token'];
+
+        log("Get Token : $token ");
+        return token;
+      } else {
+        log('No user found with this user Id: $userId');
+        return null;
+      }
+    } catch (error) {
+      log('Error: $error');
+      return null;
+    }
+  }
+
+  Future<void> fetchAndSetSubscribers() async {
+    UserProvider userProvider =
+        Provider.of(navigationKey.currentState!.context, listen: false);
+    isLoading = true;
+    try {
+      FirebaseFirestore.instance
+          .collection('gyms')
+          .doc('data')
+          .collection('data')
+          .doc(userProvider.user.gymId)
+          .collection('joinedSubscribers')
+          .getSavy()
+          .then((event) {
+        debugPrint('--- inside fetch Gym Subscribers ---');
+        subscribers.clear();
+        _originalSubscribers.clear();
+        subscribers = event.docs
+            .map((e) => User.fromMap(e.data() as Map<String, dynamic>, e.id))
+            .toList();
+        _originalSubscribers = subscribers;
+
+        isLoading = false;
+
+        notifyListeners();
+      });
+    } catch (error) {
+      isLoading = false;
+      log("ERROR While fetchAndSetSubscribers : $error");
+    }
+  }
+
+  Future<void> fetchAndSetPendingSubscribers() async {
+    UserProvider userProvider =
+        Provider.of(navigationKey.currentState!.context, listen: false);
+    isLoading = true;
+    try {
+      FirebaseFirestore.instance
+          .collection('gyms')
+          .doc('data')
+          .collection('data')
+          .doc(userProvider.user.gymId)
+          .collection('pendingSubscribers')
+          .getSavy()
+          .then((event) {
+        debugPrint('--- inside fetch Gym Subscribers ---');
+        pendingSubscribers.clear();
+        _originalPendingSubscribers.clear();
+        pendingSubscribers = event.docs
+            .map((e) => User.fromMap(e.data() as Map<String, dynamic>, e.id))
+            .toList();
+        _originalPendingSubscribers = pendingSubscribers;
+
+        isLoading = false;
+
+        notifyListeners();
+      });
+    } catch (error) {
+      isLoading = false;
+      log("ERROR While fetchAndSetPendingSubscribers : $error");
+    }
+  }
+
+  searchSubscribers(String query) {
+    if (searchController.text.isEmpty ||
+        searchController.text == '' ||
+        searchController.text == ' ') {
+      subscribers = _originalSubscribers;
+      notifyListeners();
+      return;
+    }
+    subscribers = _originalSubscribers
+        .where(
+          (element) => HelperFunctions.matchesSearch(
+            searchController.text.toLowerCase().split(" "),
+            element.name,
+          ),
+        )
+        .toList();
+    notifyListeners();
+  }
+
+  Future<void> acceptSubscriber(User subscriber) async {
+    UserProvider userProvider =
+        Provider.of(navigationKey.currentState!.context, listen: false);
+    try {
+      showLoaderDialog(navigationKey.currentContext!);
+      subscriber.isSubscribedToGym = true;
+      subscriber.dateOfGymSubscription = Timestamp.now();
+      subscriber.subscribedGymId = userProvider.user.gymId;
+      var data = subscriber.toMap();
+
+      // remove this subscriber from pending Collection
+      await FirebaseFirestore.instance
+          .collection('gyms')
+          .doc('data')
+          .collection('data')
+          .doc(userProvider.user.gymId)
+          .collection('pendingSubscribers')
+          .doc(subscriber.uid)
+          .delete()
+          .then((event) {
+        pendingSubscribers
+            .removeWhere((element) => element.uid == subscriber.uid);
+        _originalPendingSubscribers
+            .removeWhere((element) => element.uid == subscriber.uid);
+      });
+      // Add This subscriber to Joined Collection
+      await FirebaseFirestore.instance
+          .collection('gyms')
+          .doc('data')
+          .collection('data')
+          .doc(userProvider.user.gymId)
+          .collection('joinedSubscribers')
+          .doc(subscriber.uid)
+          .set(data)
+          .then((event) {
+        subscribers.add(User.fromMap(data, subscriber.uid));
+        _originalSubscribers.add(User.fromMap(data, subscriber.uid));
+      });
+      // Increase the Gym Subscribers Counter
+      await FirebaseFirestore.instance
+          .collection('gyms')
+          .doc('data')
+          .collection('data')
+          .doc(userProvider.user.gymId)
+          .update({'gymSubscribersCounter': FieldValue.increment(1)});
+      // Update the Subscriber data
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(subscriber.uid)
+          .set(data, SetOptions(merge: true));
+
+      pop();
+
+      notifyListeners();
+
+      AwesomeDialog(
+        context: navigationKey.currentContext!,
+        dialogType: DialogType.success,
+        animType: AnimType.bottomSlide,
+        title: tr('accomplished_successfully'),
+        desc: tr('subscriber_added_successfully'),
+        btnOkOnPress: () {
+          pop();
+        },
+      ).show();
+    } catch (error) {
+      print(error);
+
+      AwesomeDialog(
+        context: navigationKey.currentContext!,
+        dialogType: DialogType.error,
+        animType: AnimType.bottomSlide,
+        title: tr('wrong'),
+        desc: tr('error_occurred_subscriber_added'),
+        btnOkOnPress: () {
+          pop();
+        },
+      ).show();
+    }
+  }
+
+  Future<void> rejectSubscriber(User subscriber) async {
+    UserProvider userProvider =
+        Provider.of(navigationKey.currentState!.context, listen: false);
+    try {
+      showLoaderDialog(navigationKey.currentContext!);
+
+      // remove this subscriber from pending Collection
+      await FirebaseFirestore.instance
+          .collection('gyms')
+          .doc('data')
+          .collection('data')
+          .doc(userProvider.user.gymId)
+          .collection('pendingSubscribers')
+          .doc(subscriber.uid)
+          .delete()
+          .then((event) {
+        pendingSubscribers
+            .removeWhere((element) => element.uid == subscriber.uid);
+        _originalPendingSubscribers
+            .removeWhere((element) => element.uid == subscriber.uid);
+      });
+      pop();
+      notifyListeners();
+      AwesomeDialog(
+        context: navigationKey.currentContext!,
+        dialogType: DialogType.success,
+        animType: AnimType.bottomSlide,
+        title: tr('accomplished_successfully'),
+        desc: tr('subscriber_rejected_successfully'),
+        btnOkOnPress: () {
+          pop();
+        },
+      ).show();
+    } catch (error) {
+      print(error);
+      AwesomeDialog(
+        context: navigationKey.currentContext!,
+        dialogType: DialogType.error,
+        animType: AnimType.bottomSlide,
+        title: tr('wrong'),
+        desc: tr('error_occurred_subscriber_rejected'),
+        btnOkOnPress: () {
+          pop();
+        },
+      ).show();
+    }
+  }
+
+  Future<void> deleteSubscriber(User subscriber) async {
+    UserProvider userProvider =
+        Provider.of(navigationKey.currentState!.context, listen: false);
+    try {
+      AwesomeDialog(
+        context: navigationKey.currentContext!,
+        dialogType: DialogType.warning,
+        animType: AnimType.bottomSlide,
+        title: tr('are_you_sure'),
+        desc: tr('subscriber_deleted_permanently'),
+        btnCancelOnPress: () {
+          return;
+        },
+        btnOkOnPress: () async {
+          // Delete From Joined Collection
+          await FirebaseFirestore.instance
+              .collection('gyms')
+              .doc('data')
+              .collection('data')
+              .doc(userProvider.user.gymId)
+              .collection('joinedSubscribers')
+              .doc(subscriber.uid)
+              .delete()
+              .then((event) async {
+            subscribers.removeWhere((element) => element.uid == subscriber.uid);
+            _originalSubscribers
+                .removeWhere((element) => element.uid == subscriber.uid);
+          });
+          // decrease the Gym Subscribers Counter
+          await decrementSubscribersCount(userProvider.user.gymId.toString());
+          // Update the Subscriber data
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(subscriber.uid)
+              .update({
+            'isSubscribedToGym': false,
+            'subscribedGymId': FieldValue.delete()
+          });
+
+          notifyListeners();
+
+          AwesomeDialog(
+            context: navigationKey.currentContext!,
+            dialogType: DialogType.success,
+            animType: AnimType.bottomSlide,
+            title: tr('delete_successfully'),
+            desc: tr('subscriber_deleted_successfully'),
+            btnOkOnPress: () {},
+          ).show();
+        },
+      ).show();
+    } catch (error) {
+      log("Error while deleteTrainer : $error");
+
+      AwesomeDialog(
+        context: navigationKey.currentContext!,
+        dialogType: DialogType.error,
+        animType: AnimType.bottomSlide,
+        title: tr('wrong'),
+        desc: tr('try_again'),
+        btnOkOnPress: () {},
+      ).show();
+    }
+  }
+
+  Future<void> decrementSubscribersCount(String gymId) async {
+    UserProvider userProvider =
+        Provider.of(navigationKey.currentState!.context, listen: false);
+    try {
+      final DocumentReference gymDocRef = FirebaseFirestore.instance
+          .collection('gyms')
+          .doc('data')
+          .collection('data')
+          .doc(userProvider.user.gymId);
+      final DocumentSnapshot gymDocSnapshot = await gymDocRef.get();
+
+      if (gymDocSnapshot.exists) {
+        final int currentSubscribersCount =
+            gymDocSnapshot['gymSubscribersCounter'] ?? 0;
+
+        if (currentSubscribersCount >= 1) {
+          final int newSubscribersCount = currentSubscribersCount - 1;
+
+          await gymDocRef
+              .update({'gymSubscribersCounter': newSubscribersCount});
+
+          log('Subscribers count decremented to $newSubscribersCount');
+        } else {
+          log('gym Subscribers count is already 1 or less, no decrement needed');
+        }
+      } else {
+        log(' document not found for ID: $gymId');
+      }
+    } catch (error) {
+      log('Error: $error');
+    }
+  }
+
+  String timestampToString(Timestamp timestamp) {
+    DateTime dateTime = timestamp.toDate();
+
+    String formattedDate = DateFormat('dd/MM/yyyy').format(dateTime);
+
+    return formattedDate;
   }
 }

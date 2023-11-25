@@ -34,172 +34,176 @@ class _ExerciseCategoryScreenState extends State<ExerciseCategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        // searchBar(_searchController, (p0) => null),
-        SizedBox(
-          height: 50.h,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () {
-              Provider.of<ExerciseProvider>(context, listen: false)
-                  .fetchAndSetExercise();
-              To(const ExercisesHomeScreen());
-            },
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/exercise.jpg"),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              constraints: BoxConstraints(
-                minHeight: 100.h,
-                maxHeight: 200.h,
-                maxWidth: double.infinity,
-                minWidth: double.infinity,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  tr('look_for_your_exercise'),
-                  // "ابحث عن تمرينك",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30.sp,
-                    fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+      child: Column(
+        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          // searchBar(_searchController, (p0) => null),
+          SizedBox(
+            height: 50.h,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                Provider.of<ExerciseProvider>(context, listen: false)
+                    .fetchAndSetExercise();
+                To(const ExercisesHomeScreen());
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/exercise.jpg"),
+                    fit: BoxFit.cover,
                   ),
                 ),
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () {
-              Provider.of<HomeExerciseProvider>(context, listen: false)
-                  .fetchAndSetExercise();
-              To(const HomeExercisesHomeScreen());
-            },
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/homeExer1.jpg"),
-                  fit: BoxFit.cover,
+                constraints: BoxConstraints(
+                  minHeight: 100.h,
+                  maxHeight: 200.h,
+                  maxWidth: double.infinity,
+                  minWidth: double.infinity,
                 ),
-              ),
-              constraints: BoxConstraints(
-                minHeight: 100.h,
-                maxHeight: 200.h,
-                maxWidth: double.infinity,
-                minWidth: double.infinity,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  tr('home_exercises'),
-                  // "التمارين المنزلية",
-                  style: TextStyle(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    tr('look_for_your_exercise'),
+                    // "ابحث عن تمرينك",
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 30.sp,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        GestureDetector(
-          onTap: () {
-            Provider.of<GymProvider>(context, listen: false).fetchAndSetGyms();
-            To(const GymsScreen());
-          },
-          child: Padding(
+          Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/gymloca2.jpg"),
-                  fit: BoxFit.cover,
+            child: GestureDetector(
+              onTap: () {
+                Provider.of<HomeExerciseProvider>(context, listen: false)
+                    .fetchAndSetExercise();
+                To(const HomeExercisesHomeScreen());
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/homeExer1.jpg"),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              constraints: BoxConstraints(
-                minHeight: 100.h,
-                maxHeight: 200.h,
-                maxWidth: double.infinity,
-                minWidth: double.infinity,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  tr('gyms'),
-                  // "صالات الجيم",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30.sp,
-                    fontWeight: FontWeight.bold,
+                constraints: BoxConstraints(
+                  minHeight: 100.h,
+                  maxHeight: 200.h,
+                  maxWidth: double.infinity,
+                  minWidth: double.infinity,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    tr('home_exercises'),
+                    // "التمارين المنزلية",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30.sp,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
+          GestureDetector(
             onTap: () {
-              if (!Provider.of<UserProvider>(context, listen: false).isLogin) {
-                AwesomeDialog(
-                  context: context,
-                  dialogType: DialogType.info,
-                  animType: AnimType.bottomSlide,
-                  title: tr('alert'),
-                  desc: tr('must_log_in'),
-                  btnCancelOnPress: () {
-                    // pop();
-                  },
-                  btnOkOnPress: () {
-                    To(const LoginScreen());
-                  },
-                ).show();
-              } else {
-                Provider.of<TrainerProvider>(context, listen: false)
-                    .fetchAndSetTrainers();
-                To(const TrainerHomeScreen());
-              }
+              Provider.of<GymProvider>(context, listen: false)
+                  .fetchAndSetGyms();
+              To(const GymsScreen());
             },
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/trainer.jpg"),
-                  fit: BoxFit.cover,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/gymloca2.jpg"),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              constraints: BoxConstraints(
-                minHeight: 100.h,
-                maxHeight: 200.h,
-                maxWidth: double.infinity,
-                minWidth: double.infinity,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  tr('trainers'),
-                  // "المدربين",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30.sp,
-                    fontWeight: FontWeight.bold,
+                constraints: BoxConstraints(
+                  minHeight: 100.h,
+                  maxHeight: 200.h,
+                  maxWidth: double.infinity,
+                  minWidth: double.infinity,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    tr('gyms'),
+                    // "صالات الجيم",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                if (!Provider.of<UserProvider>(context, listen: false)
+                    .isLogin) {
+                  AwesomeDialog(
+                    context: context,
+                    dialogType: DialogType.info,
+                    animType: AnimType.bottomSlide,
+                    title: tr('alert'),
+                    desc: tr('must_log_in'),
+                    btnCancelOnPress: () {
+                      // pop();
+                    },
+                    btnOkOnPress: () {
+                      To(const LoginScreen());
+                    },
+                  ).show();
+                } else {
+                  Provider.of<TrainerProvider>(context, listen: false)
+                      .fetchAndSetTrainers();
+                  To(const TrainerHomeScreen());
+                }
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/trainer.jpg"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                constraints: BoxConstraints(
+                  minHeight: 100.h,
+                  maxHeight: 200.h,
+                  maxWidth: double.infinity,
+                  minWidth: double.infinity,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    tr('trainers'),
+                    // "المدربين",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

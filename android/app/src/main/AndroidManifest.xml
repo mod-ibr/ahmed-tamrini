@@ -1,5 +1,6 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -17,6 +18,7 @@
     <uses-feature android:name="android.hardware.microphone" />
     <uses-permission android:name="android.permission.AUDIO_CAPTURE" />
     <uses-permission android:name="android.permission.MICROPHONE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <application
         android:label="tamrini"
         android:name="${applicationName}"
@@ -34,12 +36,12 @@
                  while the Flutter UI initializes. After that, this theme continues
                  to determine the Window background behind the Flutter UI. -->
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme"
+            />
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
@@ -47,5 +49,8 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBufaYHAy80nTHvhEjS8ABOwBlSK_3HCnQ" />
     </application>
 </manifest>

@@ -20,6 +20,11 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -27,8 +32,8 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     namespace "com.example.tamrini"
-    compileSdkVersion flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
+    compileSdkVersion 33
+    ndkVersion "25.1.8937393"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -48,17 +53,38 @@ android {
         applicationId "com.tamrini1.com"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
+
     }
 
+    // buildTypes {
+    //     release {
+    //         // TODO: Add your own signing config for the release build.
+    //         // Signing with the debug keys for now, so `flutter run --release` works.
+    //         signingConfig signingConfigs.debug
+    //     }
+    // }
+      signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
+        }
+        debug {
+            minifyEnabled false
+            shrinkResources false
         }
     }
 }
@@ -69,4 +95,8 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "androidx.activity:activity:1.6.0-alpha04"
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.android.support:multidex:1.0.3'
+//    implementation 'com.google.firebase:firebase-appcheck-playintegrity'
 }

@@ -46,32 +46,38 @@ class ProfileWidget extends StatelessWidget {
       backgroundColor: const Color(0xffdbdbdb),
       radius: MediaQuery.sizeOf(context).width * 0.2,
       child: ClipOval(
-        child: CachedNetworkImage(
-          imageUrl: imagePath,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          height: double.infinity,
-          placeholder: (context, url) {
-            if (url.isEmpty) {
-              return const Icon(
+        child: imagePath.isEmpty
+            ? const Icon(
                 Icons.person_rounded,
                 size: 50,
                 color: Colors.white,
-              );
-            }
-            return Container(
-              alignment: Alignment.center,
-              width: 50,
-              height: 50,
-              child: const CircularProgressIndicator(),
-            );
-          },
-          errorWidget: (context, url, error) => const Icon(
-            Icons.person_rounded,
-            size: 50,
-            color: Colors.white,
-          ),
-        ),
+              )
+            : CachedNetworkImage(
+                imageUrl: imagePath,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                placeholder: (context, url) {
+                  if (url.isEmpty) {
+                    return const Icon(
+                      Icons.person_rounded,
+                      size: 50,
+                      color: Colors.white,
+                    );
+                  }
+                  return Container(
+                    alignment: Alignment.center,
+                    width: 50,
+                    height: 50,
+                    child: const CircularProgressIndicator(),
+                  );
+                },
+                errorWidget: (context, url, error) => const Icon(
+                  Icons.person_rounded,
+                  size: 50,
+                  color: Colors.white,
+                ),
+              ),
       ),
     );
   }

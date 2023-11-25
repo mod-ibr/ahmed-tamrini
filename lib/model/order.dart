@@ -6,6 +6,7 @@ class Order {
   String? notes;
   String? user;
   Product? product;
+  GymData? gymData;
   String? status;
   Timestamp? createdAt;
   String? id;
@@ -18,6 +19,7 @@ class Order {
       this.notes,
       this.user,
       this.product,
+      this.gymData,
       this.status,
       this.createdAt,
       this.id,
@@ -30,7 +32,9 @@ class Order {
     notes = json['notes'];
     user = json['user'];
     product =
-        json['product'] != null ? new Product.fromJson(json['product']) : null;
+        json['product'] != null ? Product.fromJson(json['product']) : null;
+    gymData =
+        json['gymData'] != null ? GymData.fromJson(json['gymData']) : null;
     status = json['status'];
     createdAt = json['createdAt'];
     image = json['image'];
@@ -39,18 +43,21 @@ class Order {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['address'] = this.address;
-    data['phoneNumber'] = this.phoneNumber;
-    data['notes'] = this.notes;
-    data['user'] = this.user;
-    if (this.product != null) {
-      data['product'] = this.product!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['address'] = address;
+    data['phoneNumber'] = phoneNumber;
+    data['notes'] = notes;
+    data['user'] = user;
+    if (product != null) {
+      data['product'] = product!.toJson();
     }
-    data['status'] = this.status;
-    data['createdAt'] = this.createdAt;
-    data['image'] = this.image;
-    data['paymentMethod'] = this.paymentMethod;
+    if (gymData != null) {
+      data['gymData'] = gymData!.toJson();
+    }
+    data['status'] = status;
+    data['createdAt'] = createdAt;
+    data['image'] = image;
+    data['paymentMethod'] = paymentMethod;
 
     return data;
   }
@@ -70,10 +77,41 @@ class Product {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['title'] = this.title;
-    data['price'] = this.price;
-    data['quantity'] = this.quantity;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['title'] = title;
+    data['price'] = price;
+    data['quantity'] = quantity;
+    return data;
+  }
+}
+
+class GymData {
+  String? gymId, gymName, gymAssets, subscriberId;
+  int? price;
+
+  GymData(
+      {this.gymId,
+      this.gymName,
+      this.gymAssets,
+      this.subscriberId,
+      this.price});
+
+  GymData.fromJson(Map<String, dynamic> json) {
+    gymId = json['gymId'];
+    gymName = json['gymName'];
+    gymAssets = json['gymAssets'];
+    subscriberId = json['subscriberId'];
+    price = json['price'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['gymId'] = gymId;
+    data['gymName'] = gymName;
+    data['gymAssets'] = gymAssets;
+    data['price'] = price;
+    data['subscriberId'] = subscriberId;
+
     return data;
   }
 }

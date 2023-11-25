@@ -25,6 +25,7 @@ import 'package:tamrini/screens/setting_screens/settings_screen.dart';
 import 'package:tamrini/screens/trainer_screens/pending_gym_screen.dart';
 import 'package:tamrini/screens/trainer_screens/pending_trainees_screen.dart';
 import 'package:tamrini/screens/trainer_screens/pending_trainers_screen.dart';
+import 'package:tamrini/screens/trainer_screens/subscribers_screen.dart';
 import 'package:tamrini/screens/trainer_screens/trainees_screen.dart';
 import 'package:tamrini/screens/trainer_screens/trainer_home_screen.dart';
 import 'package:tamrini/utils/cache_helper.dart';
@@ -34,6 +35,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../screens/exercises_screens/suggessted_exercises.dart';
 import '../../screens/login_screen/login_screen.dart';
 import '../../screens/setting_screens/app_guidance.dart';
+import '../../screens/trainer_screens/pending_subscribers_screen.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({super.key});
@@ -49,22 +51,9 @@ class _MyDrawerState extends State<MyDrawer> {
     super.initState();
   }
 
-  // List<Widget> icons = [
-  //   // SvgPicture.asset("assets/images/twitter_white.svg" ,),
-  //   Image.network(
-  //     "https://www.iconsdb.com/icons/preview/white/twitter-xxl.png",
-  //     width: 25,
-  //   ),
-  //   Icon(Icons.facebook, color: Colors.white),
-  //   SvgPicture.asset(
-  //     "assets/images/google-play.svg",
-  //   ),
-  // ];
-
   @override
   Widget build(BuildContext context) {
     return Consumer<UserProvider>(
-        // listener: (context, state) {},
         builder: (context, __, child) => Drawer(
               child: Container(
                 color: Theme.of(context).scaffoldBackgroundColor,
@@ -82,9 +71,6 @@ class _MyDrawerState extends State<MyDrawer> {
                         width: 150.w,
                         height: 70.h,
                       ),
-                      // SizedBox(
-                      //   height: 15.h,
-                      // ),
 
                       myListTielStatic(
                         tr('home'),
@@ -314,7 +300,7 @@ class _MyDrawerState extends State<MyDrawer> {
 
                       __.isCaptain
                           ? myListTielStatic(
-                              tr('subscribers'),
+                              tr('trainees'),
                               // "المشتركين ",
                               Icon(
                                 Icons.sports_handball_outlined,
@@ -326,11 +312,22 @@ class _MyDrawerState extends State<MyDrawer> {
                               To(const TraineesScreen());
                             }, false)
                           : Container(),
-
+                      __.isGymOwner
+                          ? myListTielStatic(
+                              tr('subscribers'),
+                              // "المشتركين ",
+                              Icon(
+                                Icons.sports_handball_outlined,
+                                color: Theme.of(context).iconTheme.color,
+                              ), () async {
+                              Provider.of<GymProvider>(context, listen: false)
+                                  .fetchAndSetSubscribers();
+                              To(const SubscribersScreen());
+                            }, false)
+                          : Container(),
                       __.isCaptain
                           ? myListTielStatic(
-                              tr('pending_subscribers'),
-                              // "المشتركين المعلقين",
+                              tr('pending_trainees'),
                               Icon(
                                 Icons.access_time_filled_outlined,
                                 color: Theme.of(context).iconTheme.color,
@@ -341,7 +338,18 @@ class _MyDrawerState extends State<MyDrawer> {
                               To(const PendingTraineesScreen());
                             }, false)
                           : Container(),
-
+                      __.isGymOwner
+                          ? myListTielStatic(
+                              tr('pending_subscribers'),
+                              Icon(
+                                Icons.access_time_filled_outlined,
+                                color: Theme.of(context).iconTheme.color,
+                              ), () async {
+                              Provider.of<GymProvider>(context, listen: false)
+                                  .fetchAndSetPendingSubscribers();
+                              To(const PendingSubscribersScreen());
+                            }, false)
+                          : Container(),
                       __.isCaptain || __.isAdmin
                           ? Container()
                           : myListTielStatic(

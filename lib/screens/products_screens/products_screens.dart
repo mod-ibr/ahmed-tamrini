@@ -331,10 +331,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                                                               Colors.red),
                                                                     ),
                                                                     onPressed:
-                                                                        () {
+                                                                        () async {
                                                                       pop();
 
-                                                                      _.deleteProduct(
+                                                                      await _
+                                                                          .deleteProduct(
                                                                         product: widget
                                                                             .product
                                                                             .data![index],

@@ -83,7 +83,7 @@ class ProductDetailsScreen extends StatelessWidget {
                         title: tr('error'),
                         desc: tr('confirm_email_n_phone'),
                         btnOkOnPress: () {
-                          To(SettingsScreen());
+                          To(const SettingsScreen());
                         },
                       ).show();
           },
@@ -229,11 +229,13 @@ class ProductDetailsScreen extends StatelessWidget {
                             fontSize: 28.sp,
                             // fontWeight: FontWeight.bold,
                           )),
-                      Text(" ${tr('dinar')}",
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            // fontWeight: FontWeight.bold,
-                          )),
+                      Text(
+                        context.locale.languageCode == 'ar' ? " د.ع" : ' IQD',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          // fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                   Padding(

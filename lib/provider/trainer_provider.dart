@@ -238,7 +238,7 @@ class TrainerProvider extends ChangeNotifier {
         final int currentTraineesCount =
             trainerDocSnapshot['traineesCount'] ?? 0;
 
-        if (currentTraineesCount > 1) {
+        if (currentTraineesCount >= 1) {
           final int newTraineesCount = currentTraineesCount - 1;
 
           await trainerDocRef.update({'traineesCount': newTraineesCount});

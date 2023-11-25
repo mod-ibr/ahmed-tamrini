@@ -10,6 +10,7 @@ class Gym {
   String description;
   double distance;
   bool isPendingGym;
+  int gymSubscribersCounter;
 
   Gym({
     required this.assets,
@@ -21,6 +22,7 @@ class Gym {
     required this.distance,
     required this.gymOwnerId,
     required this.isPendingGym,
+    this.gymSubscribersCounter = 0,
   });
 
   factory Gym.fromJson(Map<String, dynamic> json, String id, double distance) {
@@ -34,6 +36,7 @@ class Gym {
       description: json['description'],
       distance: distance,
       isPendingGym: json['isPendingGym'] ?? false,
+      gymSubscribersCounter: json['gymSubscribersCounter'] ?? 0,
     );
   }
 
@@ -46,6 +49,7 @@ class Gym {
       'price': price,
       'description': description,
       'isPendingGym': isPendingGym,
+      'gymSubscribersCounter': gymSubscribersCounter,
     };
   }
 }

@@ -8,13 +8,16 @@ import 'package:tamrini/provider/publisherProvider.dart';
 import 'package:tamrini/provider/trainee_provider.dart';
 import 'package:tamrini/provider/trainer_provider.dart';
 import 'package:tamrini/screens/Articles_screens/pending_publishers_screen.dart';
+import 'package:tamrini/screens/chats/all_chats_screen.dart';
 import 'package:tamrini/screens/exercises_screens/suggested_exercises_screen.dart';
 import 'package:tamrini/screens/trainer_screens/pending_gym_screen.dart';
+import 'package:tamrini/screens/trainer_screens/pending_subscribers_screen.dart';
 import 'package:tamrini/screens/trainer_screens/pending_trainees_screen.dart';
 import 'package:tamrini/screens/trainer_screens/pending_trainers_screen.dart';
 
 import '../provider/user_provider.dart';
 import '../utils/widgets/global Widgets.dart';
+import 'chats/chat_screen.dart';
 
 class NotificationPage extends StatefulWidget {
   NotificationPage({Key? key}) : super(key: key);
@@ -92,6 +95,14 @@ class _NotificationPageState extends State<NotificationPage> {
                                     homeExercises: true,
                                   ),
                                 );
+                                break;
+                              case 'رسالة جديدة':
+                                To(const AllChatsScreen());
+                                break;
+                              case 'طلب انضمام جديد':
+                                Provider.of<GymProvider>(context, listen: false)
+                                    .fetchAndSetPendingSubscribers();
+                                To(const PendingSubscribersScreen());
                                 break;
                             }
                           },

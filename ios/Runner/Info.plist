@@ -1,38 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleDisplayName</key>
-	<string>tamrini</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleLocalizations</key>
-	<array>
-		<string>ar</string>
-		<string>en</string>
-	</array>
-	<key>CFBundleName</key>
-	<string>tamrini</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>we need your permission to upload photos to : Articles, products, supplements,
+	<dict>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>We need access to your microphone for recording audio.</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>We need access to your photo library to save images.</string>
+		<key>CADisableMinimumFrameDurationOnPhone</key>
+		<true />
+		<key>FirebaseAppDelegateProxyEnabled</key>
+		<false />
+		<key>CFBundleDevelopmentRegion</key>
+		<string>$(DEVELOPMENT_LANGUAGE)</string>
+		<key>CFBundleDisplayName</key>
+		<string>tamrini</string>
+		<key>CFBundleExecutable</key>
+		<string>$(EXECUTABLE_NAME)</string>
+		<key>CFBundleIdentifier</key>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		<key>CFBundleInfoDictionaryVersion</key>
+		<string>6.0</string>
+		<key>CFBundleName</key>
+		<string>tamrini</string>
+		<key>CFBundlePackageType</key>
+		<string>APPL</string>
+		<key>CFBundleShortVersionString</key>
+		<string>$(FLUTTER_BUILD_NAME)</string>
+		<key>CFBundleSignature</key>
+		<string>????</string>
+		<key>CFBundleVersion</key>
+		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<key>LSRequiresIPhoneOS</key>
+		<true />
+		<key>NSCameraUsageDescription</key>
+		<string>we need your permission to upload photos to : Articles, products, supplements,
 			courses</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Allow access to location so you can easily find your nearby gyms</string>

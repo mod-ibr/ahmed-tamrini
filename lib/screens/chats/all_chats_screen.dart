@@ -153,37 +153,43 @@ class ChatTile extends StatelessWidget {
     );
   }
 
-  Widget buildImage(context, imagePath) {
+  Widget buildImage(context, String imagePath) {
     final size = MediaQuery.sizeOf(context);
     return ClipOval(
       child: Container(
         color: const Color(0xffdbdbdb),
-        child: CachedNetworkImage(
-          imageUrl: imagePath,
-          fit: BoxFit.cover,
-          height: size.width * 0.15,
-          width: size.width * 0.15,
-          placeholder: (context, url) {
-            if (url.isEmpty) {
-              return Icon(
+        child: (imagePath.isEmpty)
+            ? Icon(
                 Icons.person_rounded,
                 size: size.width * 0.15,
                 color: Colors.white,
-              );
-            }
-            return Container(
-              alignment: Alignment.center,
-              width: size.width * 0.15,
-              height: size.width * 0.15,
-              child: const CircularProgressIndicator(),
-            );
-          },
-          errorWidget: (context, url, error) => Icon(
-            Icons.person_rounded,
-            size: size.width * 0.15,
-            color: Colors.white,
-          ),
-        ),
+              )
+            : CachedNetworkImage(
+                imageUrl: imagePath,
+                fit: BoxFit.cover,
+                height: size.width * 0.15,
+                width: size.width * 0.15,
+                placeholder: (context, url) {
+                  if (url.isEmpty) {
+                    return Icon(
+                      Icons.person_rounded,
+                      size: size.width * 0.15,
+                      color: Colors.white,
+                    );
+                  }
+                  return Container(
+                    alignment: Alignment.center,
+                    width: size.width * 0.15,
+                    height: size.width * 0.15,
+                    child: const CircularProgressIndicator(),
+                  );
+                },
+                errorWidget: (context, url, error) => Icon(
+                  Icons.person_rounded,
+                  size: size.width * 0.15,
+                  color: Colors.white,
+                ),
+              ),
       ),
     );
   }

@@ -21,6 +21,7 @@ import '../screens/login_screen/login_screen.dart';
 import '../screens/notifications_screen.dart';
 import '../utils/alarm_database_helper.dart';
 import '../utils/cache_helper.dart';
+import '../utils/widgets/loading_widget.dart';
 
 class UserProvider with ChangeNotifier {
   List<AlarmModel> _alarms = [];
@@ -881,7 +882,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-//! Adding, pending and removing Gym Data
+  //! Adding, pending and removing Gym Data
 
   Future<void> addUserGymId(String gymid) async {
     try {

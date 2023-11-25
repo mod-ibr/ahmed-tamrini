@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,10 @@ import 'package:tamrini/screens/trainer_screens/supplements_home_screen.dart';
 import 'package:tamrini/utils/widgets/button_widget.dart';
 import 'package:tamrini/utils/widgets/global%20Widgets.dart';
 
+import '../../model/user.dart';
+import '../../provider/user_provider.dart';
+import '../chats/chat_screen.dart';
+
 class TraineeProfileScreen extends StatefulWidget {
   const TraineeProfileScreen({Key? key}) : super(key: key);
 
@@ -20,6 +25,8 @@ class TraineeProfileScreen extends StatefulWidget {
 class _TraineeProfileScreenState extends State<TraineeProfileScreen> {
   @override
   Widget build(BuildContext context) {
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -33,16 +40,52 @@ class _TraineeProfileScreenState extends State<TraineeProfileScreen> {
             physics: const BouncingScrollPhysics(),
             children: [
               const SizedBox(height: 50),
-            
+
               buildName(_.selectedTrainee!),
               const SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.all(15.0),
+                child: buildUpgradeButton(
+                    context.locale.languageCode == 'ar'
+                        ? "تواصل مع المتدرب"
+                        : "Connect with Trainee", () async {
+                  Trainee trainee = _.selectedTrainee!;
+
+                  String chatID = '';
+                  await FirebaseFirestore.instance
+                      .collection('chats')
+                      .where(
+                        'userID',
+                        isEqualTo: trainee.uid,
+                      )
+                      .where(
+                        'trainerID',
+                        isEqualTo: userProvider.getCurrentUserId(),
+                      )
+                      .get()
+                      .then(
+                    (snapshot) {
+                      if (snapshot.size == 0) return;
+                      if (!snapshot.docs.first.exists ||
+                          snapshot.docs.first.data().isEmpty) return;
+                      chatID = snapshot.docs.first.id;
+                    },
+                  );
+                  if (chatID.isEmpty) {
+                    await FirebaseFirestore.instance.collection('chats').add({
+                      'userID': trainee.uid,
+                      'trainerID': userProvider.getCurrentUserId(),
+                      'messages': [],
+                    }).then((docRef) => chatID = docRef.id);
+                  }
+                  To(ChatScreen(chatID: chatID));
+                }),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(15.0),
                 child: buildUpgradeButton(tr('data_followup'), () {
                   // child: buildUpgradeButton("البيانات و المتابعة", () {
-                  setState(() {
-                    To(const FollowUpScreen());
-                  });
                 }),
               ),
 

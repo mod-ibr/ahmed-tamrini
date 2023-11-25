@@ -288,55 +288,7 @@ class TraineeProvider extends ChangeNotifier {
     }
   }
 
-  // Future<void> deleteTrainee(Trainee trainee) async {
-  //   try {
-  //     showLoaderDialog(navigationKey.currentContext!);
-
-  //     await FirebaseFirestore.instance
-  //         .collection('trainees')
-  //         .doc('data')
-  //         .collection('data')
-  //         .where('uid', isEqualTo: trainee.uid)
-  //         .where('trainerID', isEqualTo: userProvider.user.uid)
-  //         .getSavy()
-  //         .then((event) {
-  //       event.docs.forEach((element) {
-  //         element.reference.delete();
-  //       });
-  //     });
-
-  //     pop();
-
-  //     trainees.remove(trainee);
-
-  //     notifyListeners();
-
-  //     AwesomeDialog(
-  //       context: navigationKey.currentContext!,
-  //       dialogType: DialogType.success,
-  //       animType: AnimType.bottomSlide,
-  //       title: tr('accomplished_successfully'),
-  //       desc: 'تم حذف المتدرب بنجاح',
-  //       btnOkOnPress: () {
-  //         pop();
-  //       },
-  //     ).show();
-  //   } catch (error) {
-  //     print(error);
-
-  //     AwesomeDialog(
-  //       context: navigationKey.currentContext!,
-  //       dialogType: DialogType.error,
-  //       animType: AnimType.bottomSlide,
-  //       title: tr('wrong'),
-  //       desc: 'حدث خطأ أثناء حذف المتدرب',
-  //       btnOkOnPress: () {
-  //         pop();
-  //       },
-  //     ).show();
-  //   }
-  // }
-
+  
   Future<void> updateTrainee(Trainee trainee) async {
     try {
       showLoaderDialog(navigationKey.currentContext!);
