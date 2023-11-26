@@ -26,7 +26,7 @@ class PendingTraineesScreen extends StatelessWidget {
                 children: _.pendingTrainees.isEmpty
                     ? [
                         const Spacer(),
-                        Center(child: Text(tr('no_pending_subscribers'))),
+                        Center(child: Text(tr('no_pending_trainees'))),
                         // const Center(child: Text("لا يوجد اشتراكات معلقة")),
                         const Spacer(),
                       ]
