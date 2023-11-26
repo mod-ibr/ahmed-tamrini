@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:pdf/widgets.dart' as pw;
 import 'package:provider/provider.dart';
@@ -73,25 +74,36 @@ class _AdminControlScreenState extends State<AdminControlScreen> {
       );
 
       final pdfData = await pdf.save();
-//! Start New Path
-      Directory? appDocDir = await getExternalStorageDir(folderName: 'Tamrini');
-      if (appDocDir != null) {
-        log(appDocDir.path);
-        final targetPath = appDocDir.path;
+      if (Platform.isIOS) {
+        final directory = await getApplicationDocumentsDirectory();
         final filePath =
-            '$targetPath/${DateFormat('dd-MM-yyyy').format(DateTime.now())}-users.pdf';
+            '${directory.path}/Tamrini/${DateFormat('dd-MM-yyyy').format(DateTime.now())}-users.pdf';
         final pdfFile = File(filePath);
 
         await pdfFile.writeAsBytes(pdfData);
         log("String generatedPdfFilePath : ${pdfFile.path} ");
         await OpenFilex.open(pdfFile.path);
       }
+//! Start New Path
+      else {
+        Directory? appDocDir =
+            await getExternalStorageDir(folderName: 'Tamrini');
+        if (appDocDir != null) {
+          log(appDocDir.path);
+          final targetPath = appDocDir.path;
+          final filePath =
+              '$targetPath/${DateFormat('dd-MM-yyyy').format(DateTime.now())}-users.pdf';
+          final pdfFile = File(filePath);
+
+          await pdfFile.writeAsBytes(pdfData);
+          log("String generatedPdfFilePath : ${pdfFile.path} ");
+          await OpenFilex.open(pdfFile.path);
+        }
+      }
       setState(() {
         isLoading = false;
       });
 //! Ebd New Path
-      // final directory = await getApplicationDocumentsDirectory();
-      // final filePath = '${directory.path}/users.pdf';
     } on Exception catch (e) {
       setState(() {
         isLoading = false;
