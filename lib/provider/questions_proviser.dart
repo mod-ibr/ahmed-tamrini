@@ -213,15 +213,20 @@ class QuestionsProvider with ChangeNotifier {
         'answersCount': FieldValue.increment(1)
       });
       log("FROM ADD QU , QUsername : ${question.askerUsername} , AUsername : $username");
-      await sendNotificationForQuestionOwner(
-          askerUsername: question.askerUsername, answerName: name);
+      if (question.askerUsername != username) {
+        await sendNotificationForQuestionOwner(
+            askerUsername: question.askerUsername, answerName: name);
+      }
+
       _questions[_questions.indexOf(question)].answerCount++;
       _questions[_questions.indexOf(question)].answers.add(Answers(
           answer: answer,
           date: Timestamp.now(),
           name: name,
           username: username));
+
       filteredQuestions = _questions;
+
       pop();
 
       notifyListeners();
