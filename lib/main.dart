@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -62,10 +61,10 @@ import 'package:tamrini/utils/cache_helper.dart';
 import 'package:tamrini/utils/constants.dart';
 import 'package:tamrini/utils/helper_functions.dart';
 import 'package:tamrini/utils/widgets/global%20Widgets.dart';
-
 import 'model/exercise.dart';
 import 'model/supplement.dart';
 import 'screens/nutrients_classifications_screen.dart';
+
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

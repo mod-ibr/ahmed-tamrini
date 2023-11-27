@@ -45,7 +45,7 @@ class _ProteinCalculatorScreenState extends State<ProteinCalculatorScreen> {
     super.initState();
     _activityController =
         FixedExtentScrollController(initialItem: _selectedActivity);
-     Provider.of<ThemeProvider>(context, listen: false).loadRewardedAd();
+    Provider.of<ThemeProvider>(context, listen: false).loadRewardedAd();
     _purposeController =
         FixedExtentScrollController(initialItem: _selectedPurpose);
   }
@@ -57,7 +57,7 @@ class _ProteinCalculatorScreenState extends State<ProteinCalculatorScreen> {
             listen: false)
         .reset();
 
-     Provider.of<ThemeProvider>(navigationKey.currentState!.context,
+    Provider.of<ThemeProvider>(navigationKey.currentState!.context,
             listen: false)
         .showRewardedAd();
   }
@@ -696,7 +696,7 @@ class _ProteinCalculatorScreenState extends State<ProteinCalculatorScreen> {
                               ),
                             ),
                             Text(
-                              context.locale.languageCode == 'ar' ? "ك" : "k",
+                              context.locale.languageCode == 'ar' ? "س" : "C",
                               style: TextStyle(
                                 fontSize: 15.sp,
                               ),

@@ -412,8 +412,8 @@ class _DayDetailsState extends State<DayDetails> {
                                                         context.locale
                                                                     .languageCode ==
                                                                 'ar'
-                                                            ? "ك"
-                                                            : "k",
+                                                            ? "س"
+                                                            : "C",
                                                         style: TextStyle(
                                                           color: getMyNeeds(
                                                                       type:
@@ -635,8 +635,8 @@ class _DayDetailsState extends State<DayDetails> {
                                                         context.locale
                                                                     .languageCode ==
                                                                 'ar'
-                                                            ? "ك"
-                                                            : "k",
+                                                            ? "س"
+                                                            : "C",
                                                         style: TextStyle(
                                                           fontSize: 15.sp,
                                                         ),
@@ -954,8 +954,8 @@ class _DayDetailsState extends State<DayDetails> {
                                                                   Text(
                                                                     context.locale.languageCode ==
                                                                             'ar'
-                                                                        ? "ك"
-                                                                        : "k",
+                                                                        ? "س"
+                                                                        : "C",
                                                                     style:
                                                                         TextStyle(
                                                                       fontSize:
