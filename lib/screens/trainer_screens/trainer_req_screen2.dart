@@ -210,7 +210,7 @@ class _TrainerRequestScreen2State extends State<TrainerRequestScreen2> {
                                   Radius.circular(15),
                                 ),
                               ),
-                              child: (widget.user.role != 'captain')
+                              child: (gymImage != null)
                                   ? Image.file(
                                       gymImage!,
                                       fit: BoxFit.cover,
@@ -369,7 +369,7 @@ class _TrainerRequestScreen2State extends State<TrainerRequestScreen2> {
                                     (widget.user.gymImage != null &&
                                         widget.user.gymImage!.isNotEmpty)) &&
                                 _list.length > 0) {
-                              var images = (widget.user.role != 'captain')
+                              var images = (gymImage != null)
                                   ? await Provider.of<UploadProvider>(context,
                                           listen: false)
                                       .uploadImages([gymImage!])
