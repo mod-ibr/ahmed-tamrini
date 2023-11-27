@@ -40,9 +40,10 @@ class _NutrientsClassificationsState extends State<NutrientsClassifications> {
 
   @override
   void dispose() {
-     Provider.of<ThemeProvider>(navigationKey.currentState!.context,
-            listen: false)
-        .showRewardedAd();
+    // TODO : ADS
+    //  Provider.of<ThemeProvider>(navigationKey.currentState!.context,
+    //         listen: false)
+    //     .showRewardedAd();
 
     super.dispose();
   }
@@ -56,7 +57,9 @@ class _NutrientsClassificationsState extends State<NutrientsClassifications> {
     return WillPopScope(
       onWillPop: () async {
         pop();
-        Provider.of<ThemeProvider>(context, listen: false).showRewardedAd();
+        // TODO : ADS
+
+        // Provider.of<ThemeProvider>(context, listen: false).showRewardedAd();
 
         return true;
       },

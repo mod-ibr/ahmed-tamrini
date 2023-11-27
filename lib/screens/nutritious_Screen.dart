@@ -56,7 +56,7 @@ class _NutritiousCalcScreenState extends State<NutritiousCalcScreen> {
         FixedExtentScrollController(initialItem: _selectedWeight);
     _mealController = FixedExtentScrollController(initialItem: _selectedMeal);
     searchController.text = "";
-     Provider.of<ThemeProvider>(context, listen: false).loadRewardedAd();
+    Provider.of<ThemeProvider>(context, listen: false).loadRewardedAd();
   }
 
   @override
@@ -69,10 +69,11 @@ class _NutritiousCalcScreenState extends State<NutritiousCalcScreen> {
     searchController.dispose();
     _weightController!.dispose();
     _mealController!.dispose();
+    // TODO : ADS
 
-     Provider.of<ThemeProvider>(navigationKey.currentState!.context,
-            listen: false)
-        .showRewardedAd();
+    //  Provider.of<ThemeProvider>(navigationKey.currentState!.context,
+    //         listen: false)
+    //     .showRewardedAd();
 
     super.dispose();
   }
@@ -1136,7 +1137,10 @@ class _NutritiousCalcScreenState extends State<NutritiousCalcScreen> {
                                     padding:
                                         EdgeInsets.symmetric(vertical: 5.h),
                                     onPressed: () {
-                                      if (_selectedMeal == 0) {
+                                      if (_.nutritiousList.isEmpty ||
+                                          _.nutritiousList[_selectedMeal]
+                                                  .title ==
+                                              tr('pick_meal')) {
                                         Fluttertoast.showToast(
                                             msg: context.locale.languageCode ==
                                                     'ar'
