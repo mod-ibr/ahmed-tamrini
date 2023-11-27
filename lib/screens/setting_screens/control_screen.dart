@@ -4,9 +4,10 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-
 import 'package:pdf/widgets.dart' as pw;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:tamrini/data/user_data.dart';
 import 'package:tamrini/provider/product_provider.dart';
@@ -15,7 +16,6 @@ import 'package:tamrini/screens/setting_screens/orders_screens.dart';
 import 'package:tamrini/screens/setting_screens/payment_methods_screen.dart';
 import 'package:tamrini/utils/constants.dart';
 import 'package:tamrini/utils/widgets/global%20Widgets.dart';
-import 'package:open_filex/open_filex.dart';
 
 import '../../utils/save_pdf_file.dart';
 // import 'package:open_file/open_file.dart' as of;
@@ -30,6 +30,7 @@ class AdminControlScreen extends StatefulWidget {
 class _AdminControlScreenState extends State<AdminControlScreen> {
   bool isLoading = false;
   Future<void> downloadAndSaveUsersPDF() async {
+    var status = await Permission.storage.request();
     setState(() {
       isLoading = true;
     });
@@ -74,31 +75,48 @@ class _AdminControlScreenState extends State<AdminControlScreen> {
       );
 
       final pdfData = await pdf.save();
-      if (Platform.isIOS) {
-        final directory = await getApplicationDocumentsDirectory();
-        final filePath =
-            '${directory.path}/Tamrini/${DateFormat('dd-MM-yyyy').format(DateTime.now())}-users.pdf';
-        final pdfFile = File(filePath);
 
-        await pdfFile.writeAsBytes(pdfData);
-        log("String generatedPdfFilePath : ${pdfFile.path} ");
-        await OpenFilex.open(pdfFile.path);
-      }
-//! Start New Path
-      else {
-        Directory? appDocDir =
-            await getExternalStorageDir(folderName: 'Tamrini');
-        if (appDocDir != null) {
-          log(appDocDir.path);
-          final targetPath = appDocDir.path;
-          final filePath =
-              '$targetPath/${DateFormat('dd-MM-yyyy').format(DateTime.now())}-users.pdf';
-          final pdfFile = File(filePath);
+      try {
+        if (status.isGranted) {
+          if (Platform.isIOS) {
+            final directory = await getApplicationDocumentsDirectory();
 
-          await pdfFile.writeAsBytes(pdfData);
-          log("String generatedPdfFilePath : ${pdfFile.path} ");
-          await OpenFilex.open(pdfFile.path);
+            final filePath =
+                '${directory.path}/${DateTime.now().microsecondsSinceEpoch.toString()}.pdf';
+            final pdfFile = File(filePath);
+            final pdfResult = await pdfFile.writeAsBytes(pdfData, flush: true);
+            debugPrint("this is pdf path ${pdfResult.path}");
+            await OpenFilex.open(pdfResult.path);
+
+            // final pdfResult=  await pdfFile.writeAsBytes(pdfData);
+            //   if (pdfFile.existsSync()) {
+            //     await OpenFile.open(pdfFile.path);
+            //   } else {
+
+            //     await pdfFile.create(recursive: true).then((value) {
+            //       OpenFile.open(value.path);
+            //     });
+            //   }
+          }
+          //! Start New Path
+          else {
+            Directory? appDocDir =
+                await getExternalStorageDir(folderName: 'Tamrini');
+            if (appDocDir != null) {
+              log(appDocDir.path);
+              final targetPath = appDocDir.path;
+              final filePath =
+                  '$targetPath/${DateFormat('dd-MM-yyyy').format(DateTime.now())}-users.pdf';
+              final pdfFile = File(filePath);
+
+              await pdfFile.writeAsBytes(pdfData);
+              log("String generatedPdfFilePath : ${pdfFile.path} ");
+              await OpenFilex.open(pdfFile.path);
+            }
+          }
         }
+      } catch (e) {
+        debugPrint(e.toString());
       }
       setState(() {
         isLoading = false;

@@ -122,13 +122,13 @@ dependency_overrides:
     path: packages/youtube_player_flutter
 dev_dependencies:
   flutter_launcher_icons: "^0.13.1"
-  rename: ^3.0.1
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
+  rename: ^3.0.1
 
 flutter_launcher_icons:
-  image_path: "assets/icon/icon.png"  
+  image_path: "assets/icon/icon.png"
   android: true
   ios: true
   remove_alpha_ios: true
