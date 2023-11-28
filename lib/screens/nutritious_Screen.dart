@@ -71,9 +71,9 @@ class _NutritiousCalcScreenState extends State<NutritiousCalcScreen> {
     _mealController!.dispose();
     // TODO : ADS
 
-    //  Provider.of<ThemeProvider>(navigationKey.currentState!.context,
-    //         listen: false)
-    //     .showRewardedAd();
+    Provider.of<ThemeProvider>(navigationKey.currentState!.context,
+            listen: false)
+        .showRewardedAd();
 
     super.dispose();
   }

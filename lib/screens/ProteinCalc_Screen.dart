@@ -58,9 +58,9 @@ class _ProteinCalculatorScreenState extends State<ProteinCalculatorScreen> {
         .reset();
     // TODO : ADS
 
-    // Provider.of<ThemeProvider>(navigationKey.currentState!.context,
-    //         listen: false)
-    //     .showRewardedAd();
+    Provider.of<ThemeProvider>(navigationKey.currentState!.context,
+            listen: false)
+        .showRewardedAd();
   }
 
   // This shows a CupertinoModalPopup with a reasonable fixed height which hosts CupertinoPicker.

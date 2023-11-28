@@ -41,9 +41,9 @@ class _NutrientsClassificationsState extends State<NutrientsClassifications> {
   @override
   void dispose() {
     // TODO : ADS
-    //  Provider.of<ThemeProvider>(navigationKey.currentState!.context,
-    //         listen: false)
-    //     .showRewardedAd();
+    Provider.of<ThemeProvider>(navigationKey.currentState!.context,
+            listen: false)
+        .showRewardedAd();
 
     super.dispose();
   }
@@ -59,7 +59,7 @@ class _NutrientsClassificationsState extends State<NutrientsClassifications> {
         pop();
         // TODO : ADS
 
-        // Provider.of<ThemeProvider>(context, listen: false).showRewardedAd();
+        Provider.of<ThemeProvider>(context, listen: false).showRewardedAd();
 
         return true;
       },
