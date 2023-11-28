@@ -142,7 +142,7 @@ class _GymsScreenState extends State<GymsScreen> {
     // 'الأعلى سعراً',
     tr('closest'),
     // 'الأقرب',
-    tr('furthest'),
+    tr('farthest'),
     // 'الأبعد',
   ];
 

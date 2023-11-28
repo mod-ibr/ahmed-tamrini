@@ -123,7 +123,7 @@
   "lowest_price": "Lowest Price",
   "highest_price": "Highest Price",
   "closest": "Closest",
-  "furthest": "Furthest",
+  "farthest": "Farthest",
   "male": "Male",
   "female": "Female",
   "weight": "Weight",
@@ -283,7 +283,6 @@
   "article_added": "Article added successfully",
   "article_deleted": "The article has been successfully deleted",
   "article_modified": "The article has been successfully modified",
-
   "the_dish_added": "The dish has been added successfully and will be published after approval",
   "the_food_deleted": "The food was deleted successfully",
   "the_recipe_successfully": "The recipe has been modified successfully",
@@ -303,7 +302,6 @@
   "sent_proposal": "The proposal has been sent successfully",
   "suggestion_deleted": "Suggestion was successfully deleted",
   "error_while_adding_exercise": "An error occurred while adding the exercise",
-
   "added_gym": "The gym has been added successfully",
   "deleted_gym": "The gym has been successfully deleted",
   "modified_gym": "The gym has been modified successfully",

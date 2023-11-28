@@ -6,13 +6,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:tamrini/data/location.dart';
 import 'package:tamrini/firebase_stuff/firestore.dart';
 import 'package:tamrini/provider/user_provider.dart';
-import 'package:tamrini/utils/widgets/loading_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:http/http.dart' as http;
+
 import '../model/gym.dart';
 import '../model/user.dart';
 import '../utils/app_constants.dart';
@@ -26,11 +26,13 @@ class GymProvider with ChangeNotifier {
   bool isLoading = false;
   String? selectedSortBy;
   TextEditingController searchController = TextEditingController();
+
 //! Start  Gym Subscribers
   List<User> subscribers = [],
       _originalSubscribers = [],
       pendingSubscribers = [],
       _originalPendingSubscribers = [];
+
 //! End Gym Subscribers
   List<Gym> get gyms {
     return [..._gyms];
@@ -68,7 +70,7 @@ class GymProvider with ChangeNotifier {
       // 'الأعلى سعراً',
       tr('closest'),
       // 'الأقرب',
-      tr('furthest'),
+      tr('farthest'),
       // 'الأبعد',
     ];
     int index = sortBy.indexWhere((element) => element == value);
@@ -417,6 +419,7 @@ class GymProvider with ChangeNotifier {
       throw 'Could not open the map.';
     }
   }
+
 //! ------------ Subscription to Gym Part ---------------
 
   Future<void> subscribeToGym({required User user, required Gym gym}) async {

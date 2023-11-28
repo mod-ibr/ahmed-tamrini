@@ -123,7 +123,7 @@
   "lowest_price": "الأقل سعرا",
   "highest_price": "الأعلى سعرا",
   "closest": "الأقرب",
-  "furthest": "الأبعد",
+  "farthest": "الأبعد",
   "male": "ذكر",
   "female": "أنثى",
   "weight": "الوزن",
@@ -256,7 +256,6 @@
   "must_log_in": "يجب عليك تسجيل الدخول اولا للمتابعة",
   "confirm_email_n_phone": "يجب تأكيد البريد الالكتروني أو رقم الهاتف أولا من الإعدادات",
   "buy_now": "شراء الان",
-
   "delete_account": "هل انت متأكد من حذف الحساب؟",
   "delete_question": "هل انت متأكد من حذف هذا السؤال؟",
   "delete_answer": "هل انت متأكد من حذف هذه الإجابة ؟",
@@ -299,7 +298,6 @@
   "sent_proposal": "تم ارسال الاقتراح بنجاح",
   "suggestion_deleted": "تم حذف الاقتراح بنجاح",
   "error_while_adding_exercise": "حدث خطأ اثناء اضافة التمرين",
-
   "added_gym": "تمت إضافة الصالة بنجاح",
   "deleted_gym": "تمت حذف الصالة بنجاح",
   "modified_gym": "تمت تعديل الصالة بنجاح",
@@ -399,7 +397,6 @@
   "reset_password_link_sent": "تم ارسال رابط استعادة كلمة المرور",
   "reset_password_link_sent_to_email": "تم ارسال رابط استعادة كلمة المرور الى بريدك الالكتروني",
   "work_added": "تم اضافه العمل الي المعرض",
-
   "contact_trainer": "برجاء التواصل مع المدرب على وسائل التواصل الاجتماعي حتى يتم قبول طلبك",
   "rejected_trainer_successfully": "تم رفض المدرب بنجاح",
   "current_publisher_will_be_deleted": "سيتم حذف الناشر الحالي وتقديم طلب بالمعلومات الجديده",
