@@ -43,7 +43,7 @@ class _MyDayState extends State<MyDay> {
     DocumentReference userDoc =
         FirebaseFirestore.instance.collection('users').doc(docID);
 
-    String dayDoc = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    String dayDoc = DateFormat('dd-MM-yyyy', "en").format(DateTime.now());
     await userDoc
         .collection('my_day')
         .doc('data')
@@ -83,6 +83,7 @@ class _MyDayState extends State<MyDay> {
   }
 
   dayCard({required String day}) {
+    debugPrint(day);
     return Dismissible(
       key: UniqueKey(),
       background: Container(
@@ -158,7 +159,7 @@ class _MyDayState extends State<MyDay> {
           ),
           title: AutoSizeText(
             DateFormat('EEEE dd MMMM', context.locale.languageCode)
-                .format(DateFormat('dd-MM-yyyy').parse(day)),
+                .format(DateFormat('dd-MM-yyyy', "en").parse(day)),
             style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
@@ -257,12 +258,16 @@ class _MyDayState extends State<MyDay> {
                             ),
                           );
                         }
+                        
                         List<QueryDocumentSnapshot> allDays =
                             snapshot.data?.docs ?? [];
                         Map<String, dynamic> dayData = {};
                         List<Map<String, dynamic>> validDays = [];
                         for (QueryDocumentSnapshot day in allDays) {
+                        
                           if (!day.exists || day.data() == null) continue;
+                          debugPrint("DAY ID");
+                          debugPrint(day.id);
                           dayData = day.data() as Map<String, dynamic>;
                           validDays.add({
                             'day': day.id,
@@ -270,6 +275,7 @@ class _MyDayState extends State<MyDay> {
                             'nutrients': dayData['nutrients'],
                           });
                         }
+                          
                         return ListView.builder(
                           shrinkWrap: true,
                           padding: EdgeInsets.symmetric(

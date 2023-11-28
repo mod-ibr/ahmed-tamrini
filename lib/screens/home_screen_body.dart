@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +5,6 @@ import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:tamrini/model/exercise.dart';
 import 'package:tamrini/model/product.dart';
 import 'package:tamrini/provider/home_provider.dart';
@@ -147,120 +144,120 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
                 : SizedBox(
                     height: getHeight * 0.3,
                     width: getWidth,
-                    child: ScrollSnapList(
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
                       itemCount: _.exercises.length,
-                      itemSize: getWidth * 0.7,
-                      // reverse: true,
-                      dynamicItemSize: true,
-                      dynamicSizeEquation: (double distance) {
-                        return 1 - min(distance.abs() / 500, 0.2);
-                        // return 1 - (distance / 1000);
-                      },
+                      
                       // dynamicSizeEquation: (index) {
                       //   return 1.0;
                       // },
                       shrinkWrap: true,
-                      onItemFocus: (index) {
-                        print("focused item $index");
-                      },
+                      
                       itemBuilder: (__, index) {
-                        return InkWell(
-                          borderRadius: BorderRadius.circular(15),
-                          onTap: () {
-                            To(ExerciseArticlesDetailsScreen(
-                                exercise: _.exercises[index],
-                                category: Exercise(id: "0"),
-                                isAll: true));
-                          },
-                          child: Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(30),
-                                child: Image(
-                                  image: _.exercises[index].assets != null &&
-                                          _.exercises[index].assets!.isNotEmpty
-                                      ? HelperFunctions
-                                          .ourFirebaseImageProvider(
-                                              url: _.exercises[index].assets!
-                                                  .first)
-                                      : Image.asset("assets/images/allExer.jpg")
-                                          .image,
-                                  fit: BoxFit.cover,
-                                  width: getWidth * 0.7,
-                                  height: getHeight * 0.3,
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                left: 0,
-                                child: Container(
-                                  height: getHeight * 0.18,
-                                  // width: getWidht * 0.7,
-                                  constraints: const BoxConstraints(
-                                    maxWidth: double.infinity,
-                                    maxHeight: double.infinity,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blueGrey[500],
+                        return AspectRatio(
+                          aspectRatio: 16 / 13,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(15),
+                              onTap: () {
+                                To(ExerciseArticlesDetailsScreen(
+                                    exercise: _.exercises[index],
+                                    category: Exercise(id: "0"),
+                                    isAll: true));
+                              },
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
                                     borderRadius: BorderRadius.circular(30),
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.blueGrey[900]!.withOpacity(0.0),
-                                        Colors.blueGrey[500]!.withOpacity(0.5),
-                                        Colors.blueGrey[500]!.withOpacity(0.8),
-                                        Colors.blueGrey[500]!.withOpacity(1.0),
-                                      ],
+                                    child: Image(
+                                      image: _.exercises[index].assets != null &&
+                                              _.exercises[index].assets!.isNotEmpty
+                                          ? HelperFunctions
+                                              .ourFirebaseImageProvider(
+                                                  url: _.exercises[index].assets!
+                                                      .first)
+                                          : Image.asset("assets/images/allExer.jpg")
+                                              .image,
+                                      fit: BoxFit.cover,
+                                      width: getWidth * 0.7,
+                                      height: getHeight * 0.3,
                                     ),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Colors.black12,
-                                        spreadRadius: 5,
-                                        blurRadius: 10,
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    left: 0,
+                                    child: Container(
+                                      height: getHeight * 0.18,
+                                      // width: getWidht * 0.7,
+                                      constraints: const BoxConstraints(
+                                        maxWidth: double.infinity,
+                                        maxHeight: double.infinity,
                                       ),
-                                    ],
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Flexible(
-                                          flex: 1,
-                                          child: Text(
-                                            _.exercises[index].title ?? '',
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
+                                      decoration: BoxDecoration(
+                                        color: Colors.blueGrey[500],
+                                        borderRadius: BorderRadius.circular(30),
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.blueGrey[900]!.withOpacity(0.0),
+                                            Colors.blueGrey[500]!.withOpacity(0.5),
+                                            Colors.blueGrey[500]!.withOpacity(0.8),
+                                            Colors.blueGrey[500]!.withOpacity(1.0),
+                                          ],
+                                        ),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.black12,
+                                            spreadRadius: 5,
+                                            blurRadius: 10,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Flexible(
+                                              flex: 1,
+                                              child: Text(
+                                                _.exercises[index].title ?? '',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
                                             ),
-                                          ),
+                                            const SizedBox(
+                                              height: 5.0,
+                                            ),
+                                            Text(
+                                              _.exercises[index].description!,
+                                              maxLines: 1,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 15,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        const SizedBox(
-                                          height: 5.0,
-                                        ),
-                                        Text(
-                                          _.exercises[index].description!,
-                                          maxLines: 1,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 15,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         );
                       },
@@ -328,125 +325,131 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
                 : SizedBox(
                     height: getHeight * 0.3,
                     // width: getWidht,
-                    child: ScrollSnapList(
-                      dynamicSizeEquation: (double distance) {
-                        return 1 - min(distance.abs() / 500, 0.2);
-                        // return 1 - (distance / 1000);
-                      },
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
 
                       // listViewPadding:
                       //     const EdgeInsets.symmetric(horizontal: 10),
                       itemCount: _.articles.length,
-                      itemSize: getWidth * 0.7,
+                      
                       // reverse: true,
-                      dynamicItemSize: true,
+                      
                       shrinkWrap: true,
-                      updateOnScroll: true,
-                      focusOnItemTap: true,
-                      onItemFocus: (index) {
-                        // articleIndex = index;
-                        // setState(() {});
-                        print("focused item $index");
-                      },
+                      
+                     
                       itemBuilder: (__, index) {
-                        return InkWell(
-                          borderRadius: BorderRadius.circular(15),
-                          onTap: () {
-                            To(ArticleDetailsScreen(
-                              article: _.articles[index],
-                              type: 'existing',
-                              isAll: true,
-                            ));
-                          },
-                          child: Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(30),
-                                child: Image(
-                                  image: _.articles[index].image != null &&
-                                          _.articles[index].image!.isNotEmpty
-                                      ? HelperFunctions
-                                          .ourFirebaseImageProvider(
-                                              url: _
-                                                  .articles[index].image!.first)
-                                      : Image.asset('assets/images/allExer.jpg')
-                                          .image,
-                                  fit: BoxFit.fill,
-                                  width: getWidth * 0.7,
-                                  height: getHeight * 0.3,
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                left: 0,
-                                child: Container(
-                                  // constraints: const BoxConstraints(
-                                  //   maxWidth: double.infinity,
-                                  //   maxHeight: double.infinity,
-                                  //
-                                  // ),
-                                  height: getHeight * 0.18,
-                                  decoration: BoxDecoration(
-                                    color: Colors.blueGrey[500],
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.blueGrey[500]!.withOpacity(0.0),
-                                        Colors.blueGrey[500]!.withOpacity(0.5),
-                                        Colors.blueGrey[500]!.withOpacity(0.8),
-                                        Colors.blueGrey[500]!.withOpacity(1.0),
-                                      ],
-                                    ),
+                        return AspectRatio(
+                          aspectRatio: 16 / 13,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(15),
+                              onTap: () {
+                                To(ArticleDetailsScreen(
+                                  article: _.articles[index],
+                                  type: 'existing',
+                                  isAll: true,
+                                ));
+                              },
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
                                     borderRadius: BorderRadius.circular(30),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Colors.black12,
-                                        spreadRadius: 5,
-                                        blurRadius: 10,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Flexible(
-                                          flex: 1,
-                                          child: Text(
-                                            _.articles[index].title ?? '',
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 5.0,
-                                        ),
-                                        Text(
-                                          _.articles[index].body!,
-                                          maxLines: 1,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 15,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
+                                    child: Image(
+                                      image: _.articles[index].image != null &&
+                                              _.articles[index].image!
+                                                  .isNotEmpty
+                                          ? HelperFunctions
+                                              .ourFirebaseImageProvider(
+                                                  url: _.articles[index].image!
+                                                      .first)
+                                          : Image.asset(
+                                                  'assets/images/allExer.jpg')
+                                              .image,
+                                      fit: BoxFit.fill,
+                                      width: getWidth * 0.7,
+                                      height: getHeight * 0.3,
                                     ),
                                   ),
-                                ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    left: 0,
+                                    child: Container(
+                                      // constraints: const BoxConstraints(
+                                      //   maxWidth: double.infinity,
+                                      //   maxHeight: double.infinity,
+                                      //
+                                      // ),
+                                      height: getHeight * 0.18,
+                                      decoration: BoxDecoration(
+                                        color: Colors.blueGrey[500],
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.blueGrey[500]!
+                                                .withOpacity(0.0),
+                                            Colors.blueGrey[500]!
+                                                .withOpacity(0.5),
+                                            Colors.blueGrey[500]!
+                                                .withOpacity(0.8),
+                                            Colors.blueGrey[500]!
+                                                .withOpacity(1.0),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(30),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.black12,
+                                            spreadRadius: 5,
+                                            blurRadius: 10,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Flexible(
+                                              flex: 1,
+                                              child: Text(
+                                                _.articles[index].title ?? '',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 5.0,
+                                            ),
+                                            Text(
+                                              _.articles[index].body!,
+                                              maxLines: 1,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 15,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         );
                       },
@@ -514,122 +517,121 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
                 : SizedBox(
                     height: getHeight * 0.3,
                     // width: getWidht,
-                    child: ScrollSnapList(
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
                       itemCount: _.products.length,
-                      itemSize: getWidth * 0.7,
-                      // reverse: true,
-                      dynamicItemSize: true,
-                      shrinkWrap: true,
-                      dynamicSizeEquation: (double distance) {
-                        return 1 - min(distance.abs() / 500, 0.2);
-                        // return 1 - (distance / 1000);
-                      },
-                      onItemFocus: (index) {
-                        print("focused item $index");
-                      },
+                   
+                     
                       itemBuilder: (__, index) {
-                        return InkWell(
-                          borderRadius: BorderRadius.circular(15),
-                          onTap: () {
-                            To(ProductDetailsScreen(
-                              product: _.products[index],
-                              category: Product(
-                                id: _.products[index].id!,
-                              ),
-                              isAll: true,
-                            ));
-                          },
-                          child: Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(30),
-                                child: Image(
-                                  image: _.products[index].assets != null &&
-                                          _.products[index].assets!.isNotEmpty
-                                      ? HelperFunctions
-                                          .ourFirebaseImageProvider(
-                                              url: _.products[index].assets!
-                                                  .first)
-                                      : Image.asset('assets/images/allExer.jpg')
-                                          .image,
-                                  fit: BoxFit.fill,
-                                  width: getWidth * 0.7,
-                                  height: getHeight * 0.3,
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                left: 0,
-                                child: Container(
-                                  // constraints: const BoxConstraints(
-                                  //   maxWidth: double.infinity,
-                                  //   maxHeight: double.infinity,
-                                  //
-                                  // ),
-                                  height: getHeight * 0.18,
-                                  decoration: BoxDecoration(
-                                    color: Colors.blueGrey[500],
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.blueGrey[500]!.withOpacity(0.0),
-                                        Colors.blueGrey[500]!.withOpacity(0.5),
-                                        Colors.blueGrey[500]!.withOpacity(0.8),
-                                        Colors.blueGrey[500]!.withOpacity(1.0),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(30),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Colors.black12,
-                                        spreadRadius: 5,
-                                        blurRadius: 10,
-                                      ),
-                                    ],
+                        return AspectRatio(
+                          aspectRatio: 16 / 13,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(15),
+                              onTap: () {
+                                To(ProductDetailsScreen(
+                                  product: _.products[index],
+                                  category: Product(
+                                    id: _.products[index].id!,
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          _.products[index].title ?? '',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18,
+                                  isAll: true,
+                                ));
+                              },
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: Image(
+                                      image: _.products[index].assets != null &&
+                                              _.products[index].assets!.isNotEmpty
+                                          ? HelperFunctions
+                                              .ourFirebaseImageProvider(
+                                                  url: _.products[index].assets!
+                                                      .first)
+                                          : Image.asset('assets/images/allExer.jpg')
+                                              .image,
+                                      fit: BoxFit.fill,
+                                      width: getWidth * 0.7,
+                                      height: getHeight * 0.3,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    left: 0,
+                                    child: Container(
+                                      // constraints: const BoxConstraints(
+                                      //   maxWidth: double.infinity,
+                                      //   maxHeight: double.infinity,
+                                      //
+                                      // ),
+                                      height: getHeight * 0.18,
+                                      decoration: BoxDecoration(
+                                        color: Colors.blueGrey[500],
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.blueGrey[500]!.withOpacity(0.0),
+                                            Colors.blueGrey[500]!.withOpacity(0.5),
+                                            Colors.blueGrey[500]!.withOpacity(0.8),
+                                            Colors.blueGrey[500]!.withOpacity(1.0),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(30),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.black12,
+                                            spreadRadius: 5,
+                                            blurRadius: 10,
                                           ),
-                                        ),
-                                        const SizedBox(
-                                          height: 5.0,
-                                        ),
-                                        Row(
+                                        ],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.end,
                                           children: [
-                                            AutoSizeText(
-                                              "${_.products[index].price}د.ع",
+                                            Text(
+                                              _.products[index].title ?? '',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                               style: const TextStyle(
                                                 color: Colors.white,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
                                               ),
                                             ),
                                             const SizedBox(
-                                              width: 5.0,
+                                              height: 5.0,
+                                            ),
+                                            Row(
+                                              children: [
+                                                AutoSizeText(
+                                                  "${_.products[index].price}د.ع",
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 5.0,
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         );
                       },
@@ -695,157 +697,156 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
                 : SizedBox(
                     height: getHeight * 0.3,
                     // width: getWidht,
-                    child: ScrollSnapList(
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
                       itemCount: _.gyms.length,
-                      itemSize: getWidth * 0.7,
-                      // reverse: true,
-                      dynamicItemSize: true,
-                      shrinkWrap: true,
-                      dynamicSizeEquation: (double distance) {
-                        return 1 - min(distance.abs() / 500, 0.2);
-                        // return 1 - (distance / 1000);
-                      },
-                      onItemFocus: (index) {
-                        print("focused item $index");
-                      },
+                      
+                      
                       itemBuilder: (__, index) {
-                        return InkWell(
-                          borderRadius: BorderRadius.circular(15),
-                          onTap: () {
-                            To(GymDetailsScreen(
-                              gym: _.gyms[index],
-                              isAll: true,
-                            ));
-                          },
-                          child: Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(30),
-                                child: Image(
-                                  image: _.gyms[index].assets.isNotEmpty
-                                      ? HelperFunctions
-                                          .ourFirebaseImageProvider(
-                                              url: _.gyms[index].assets.first)
-                                      : Image.asset('assets/images/allExer.jpg')
-                                          .image,
-                                  fit: BoxFit.fill,
-                                  width: getWidth * 0.7,
-                                  height: getHeight * 0.3,
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                left: 0,
-                                child: Container(
-                                  // constraints: const BoxConstraints(
-                                  //   maxWidth: double.infinity,
-                                  //   maxHeight: double.infinity,
-                                  //
-                                  // ),
-                                  height: getHeight * 0.18,
-                                  decoration: BoxDecoration(
-                                    color: Colors.blueGrey[500],
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.blueGrey[500]!.withOpacity(0.0),
-                                        Colors.blueGrey[500]!.withOpacity(0.5),
-                                        Colors.blueGrey[500]!.withOpacity(0.8),
-                                        Colors.blueGrey[500]!.withOpacity(1.0),
-                                      ],
-                                    ),
+                        return AspectRatio(
+                          aspectRatio: 16 / 13,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(15),
+                              onTap: () {
+                                To(GymDetailsScreen(
+                                  gym: _.gyms[index],
+                                  isAll: true,
+                                ));
+                              },
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
                                     borderRadius: BorderRadius.circular(30),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Colors.black12,
-                                        spreadRadius: 5,
-                                        blurRadius: 10,
-                                      ),
-                                    ],
+                                    child: Image(
+                                      image: _.gyms[index].assets.isNotEmpty
+                                          ? HelperFunctions
+                                              .ourFirebaseImageProvider(
+                                                  url: _.gyms[index].assets.first)
+                                          : Image.asset('assets/images/allExer.jpg')
+                                              .image,
+                                      fit: BoxFit.fill,
+                                      width: getWidth * 0.7,
+                                      height: getHeight * 0.3,
+                                    ),
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Flexible(
-                                          flex: 1,
-                                          child: Text(
-                                            _.gyms[index].name ?? '',
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                            ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    left: 0,
+                                    child: Container(
+                                      // constraints: const BoxConstraints(
+                                      //   maxWidth: double.infinity,
+                                      //   maxHeight: double.infinity,
+                                      //
+                                      // ),
+                                      height: getHeight * 0.18,
+                                      decoration: BoxDecoration(
+                                        color: Colors.blueGrey[500],
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.blueGrey[500]!.withOpacity(0.0),
+                                            Colors.blueGrey[500]!.withOpacity(0.5),
+                                            Colors.blueGrey[500]!.withOpacity(0.8),
+                                            Colors.blueGrey[500]!.withOpacity(1.0),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(30),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.black12,
+                                            spreadRadius: 5,
+                                            blurRadius: 10,
                                           ),
-                                        ),
-                                        const SizedBox(
-                                          height: 5.0,
-                                        ),
-                                        Row(
+                                        ],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.end,
                                           children: [
-                                            Text(
-                                              _.gyms[index].distance
-                                                      .toPrecision(3)
-                                                      .toString() ??
-                                                  '',
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 15,
+                                            Flexible(
+                                              flex: 1,
+                                              child: Text(
+                                                _.gyms[index].name ?? '',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                ),
                                               ),
                                             ),
                                             const SizedBox(
-                                              width: 5.0,
+                                              height: 5.0,
                                             ),
-                                            Text(
-                                              context.locale.languageCode ==
-                                                      'ar'
-                                                  ? "كم"
-                                                  : 'km',
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                            const Spacer(),
-                                            Text(
-                                              " ${_.gyms[index].price.toString()}",
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 15,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width: 1.0,
-                                            ),
-                                            Text(
-                                              context.locale.languageCode ==
-                                                      'ar'
-                                                  ? " د.ع/شهر "
-                                                  : ' IQD/month ',
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 13,
-                                              ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  _.gyms[index].distance
+                                                          .toPrecision(3)
+                                                          .toString() ??
+                                                      '',
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 5.0,
+                                                ),
+                                                Text(
+                                                  context.locale.languageCode ==
+                                                          'ar'
+                                                      ? "كم"
+                                                      : 'km',
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                                const Spacer(),
+                                                Text(
+                                                  " ${_.gyms[index].price.toString()}",
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 1.0,
+                                                ),
+                                                Text(
+                                                  context.locale.languageCode ==
+                                                          'ar'
+                                                      ? " د.ع/شهر "
+                                                      : ' IQD/month ',
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         );
                       },

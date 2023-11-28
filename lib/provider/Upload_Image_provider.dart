@@ -200,7 +200,7 @@ class UploadProvider with ChangeNotifier {
         print('No image selected.');
         return null;
       }
-    } on Exception catch (e) {
+    } catch (e) {
       print(e);
       print('Error get image from Gallery.');
       return null;

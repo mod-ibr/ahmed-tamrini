@@ -211,7 +211,8 @@ class _DayDetailsState extends State<DayDetails> {
                         appBar: globalAppBar(DateFormat(
                                 'EEEE dd MMMM', context.locale.languageCode)
                             .format(
-                                DateFormat('dd-MM-yyyy').parse(widget.day))),
+                                DateFormat('dd-MM-yyyy', "en")
+                                .parse(widget.day))),
                         body: StatefulBuilder(
                           builder: (context, setState) {
                             return SingleChildScrollView(
