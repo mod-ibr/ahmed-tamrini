@@ -16,7 +16,7 @@ class ChangePhoneScreen extends StatefulWidget {
 }
 
 class _ChangePhoneScreenState extends State<ChangePhoneScreen> {
-  TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   bool enableButton = false;
 
   String? code;
@@ -80,7 +80,7 @@ class _ChangePhoneScreenState extends State<ChangePhoneScreen> {
                     const Spacer(),
                     Text(
                       Provider.of<UserProvider>(context, listen: false)
-                              .user!
+                              .user
                               .isVerifiedPhoneNumber
                           ? tr('verified')
                           : tr('not_verified'),
@@ -174,7 +174,8 @@ class _ChangePhoneScreenState extends State<ChangePhoneScreen> {
                               // optional. Shows phone code before the country name.
                               onSelect: (Country country) {
                                 code = country.phoneCode;
-                                print('Select country: ${country.phoneCode}');
+                                debugPrint(
+                                    'Select country: ${country.phoneCode}');
                                 setState(() {});
                               },
                             );
@@ -216,7 +217,7 @@ class _ChangePhoneScreenState extends State<ChangePhoneScreen> {
                 width: 100.w,
                 child: ElevatedButton(
                   onPressed: () {
-                    print('+$code-${_phoneController.text.trim()}');
+                    debugPrint('+$code-${_phoneController.text.trim()}');
                     if (enableButton) {
                       if (_phoneController.text.length < 9) {
                         Fluttertoast.showToast(
